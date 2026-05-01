@@ -1,956 +1,1286 @@
-// About.jsx
-import { useEffect, useRef, useState } from 'react';
-import { 
-  CheckCircle2, 
-  Target, 
-  Lightbulb, 
-  HeartHandshake, 
-  ShieldCheck, 
-  Code2, 
-  Server, 
-  Cpu, 
-  Cloud, 
-  Users, 
-  ArrowRight,
-  Sparkles,
-  Layers,
-  Award,
-  Briefcase,
-  Globe,
-  Clock,
-  Mail,
-  MapPin,
-  Phone,
-  ChevronRight,
-  Rocket,
-  Zap,
-  BarChart3,
-  LineChart,
-  TrendingUp,
-  Play,
-  X
+import React, { useEffect, useState } from 'react';
+import {
+  Rocket, Target, Award, Users, Heart, Code, Cloud, Smartphone,
+  Shield, Clock, Globe, TrendingUp, CheckCircle, ChevronRight,
+  Briefcase, Calendar, MapPin, Mail, Phone, 
+  Users as Linkedin, Globe as Twitter, Globe as Facebook, Camera as Instagram, 
+  Quote, Star, Sparkles, Zap, Coffee,
+  BookOpen, Lightbulb, BarChart3, Settings, Headphones, Trophy,
+  Eye, Flag, Compass, Gift, ThumbsUp, ArrowRight, Play,
+  Building2, UserCheck, Rocket as RocketIcon, BadgeCheck,
+  Crown, Diamond, Medal, Star as StarIcon, HeartHandshake,
+  Camera
 } from 'lucide-react';
-import aboutVision from '../assets/about_vision.png';
-
-const styles = `
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  :root {
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #0f0f15;
-    --bg-card: rgba(20, 20, 30, 0.8);
-    --text-primary: #ffffff;
-    --text-secondary: #a1a1aa;
-    --text-muted: #71717a;
-    --accent-blue: #3b82f6;
-    --accent-purple: #8b5cf6;
-    --accent-pink: #ec4899;
-    --accent-cyan: #06b6d4;
-    --accent-green: #10b981;
-    --gradient-1: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    --gradient-2: linear-gradient(135deg, #8b5cf6, #ec4899);
-    --gradient-3: linear-gradient(135deg, #06b6d4, #3b82f6);
-    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-    --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-  }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    overflow-x: hidden;
-    line-height: 1.6;
-  }
-
-  .container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 2rem;
-  }
-
-  @media (max-width: 768px) {
-    .container {
-      padding: 0 1.5rem;
-    }
-  }
-
-  .text-gradient {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    background-size: 200% 200%;
-    animation: gradientShift 3s ease infinite;
-  }
-
-  @keyframes gradientShift {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    font-family: inherit;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.2);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-  }
-
-  .btn:hover::before {
-    width: 300px;
-    height: 300px;
-  }
-
-  .btn-primary {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    color: white;
-    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
-  }
-
-  .btn-outline {
-    background: transparent;
-    color: white;
-    border: 2px solid rgba(59, 130, 246, 0.5);
-  }
-
-  .btn-outline:hover {
-    border-color: #3b82f6;
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
-    transform: translateY(-2px);
-  }
-
-  .btn-large {
-    padding: 1rem 2rem;
-    font-size: 1rem;
-  }
-
-  .section {
-    padding: 80px 0;
-  }
-
-  @media (max-width: 768px) {
-    .section {
-      padding: 60px 0;
-    }
-  }
-
-  .section-header {
-    text-align: center;
-    margin-bottom: 60px;
-  }
-
-  .section-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-  }
-
-  @media (max-width: 768px) {
-    .section-title {
-      font-size: 2rem;
-    }
-  }
-
-  .section-subtitle {
-    font-size: 1.1rem;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .glass {
-    background: rgba(20, 20, 30, 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-  }
-
-  .glowing-border {
-    position: relative;
-  }
-
-  .glowing-border::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
-    border-radius: inherit;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: -1;
-  }
-
-  .glowing-border:hover::before {
-    opacity: 0.5;
-  }
-
-  .card-3d {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-
-  .card-3d:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.8s ease;
-  }
-
-  .reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .animate-fade-up {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.6s forwards;
-  }
-
-  @keyframes fadeUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Hero Section */
-  .hero {
-    min-height: 80vh;
-    display: flex;
-    align-items: center;
-    position: relative;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
-  }
-
-  .hero-title {
-    font-size: clamp(2.5rem, 5vw, 4rem);
-    font-weight: 800;
-    line-height: 1.2;
-    margin-bottom: 1.5rem;
-  }
-
-  .hero-subtitle {
-    font-size: 1.35rem;
-    color: var(--text-secondary);
-    max-width: 700px;
-    margin: 0 auto;
-  }
-
-  /* Timeline */
-  .timeline {
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .timeline-item {
-    display: flex;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-
-  .timeline-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 1.2rem;
-    color: white;
-    flex-shrink: 0;
-  }
-
-  .timeline-content {
-    flex: 1;
-    padding: 2rem;
-    border-radius: 16px;
-    transition: all 0.3s;
-  }
-
-  @media (max-width: 768px) {
-    .timeline-item {
-      flex-direction: column;
-    }
-    .timeline-icon {
-      margin: 0 auto;
-    }
-  }
-
-  /* Features Grid */
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-  }
-
-  .feature-card {
-    padding: 2rem;
-    border-radius: 24px;
-    transition: all 0.3s;
-    background: rgba(20, 20, 30, 0.8);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-  }
-
-  .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  }
-
-  .feature-icon-wrapper {
-    width: 64px;
-    height: 64px;
-    background: rgba(59, 130, 246, 0.1);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 1.5rem;
-  }
-
-  /* Split Section */
-  .split-section {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-  }
-
-  @media (max-width: 968px) {
-    .split-section {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-  }
-
-  /* Stats Grid */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-  }
-
-  .stat-number {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 0.5rem;
-  }
-
-  .stat-label {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-  }
-
-  /* Team Grid */
-  .team-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-  }
-
-  .team-card {
-    text-align: center;
-    padding: 2rem;
-    border-radius: 24px;
-    transition: all 0.3s;
-  }
-
-  .team-image {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin: 0 auto 1.5rem;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    font-weight: bold;
-    color: white;
-  }
-
-  .team-card h4 {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .team-role {
-    color: #3b82f6;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-
-  .team-bio {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-
-  /* Value Props */
-  .value-props {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-  }
-
-  .value-item {
-    text-align: center;
-    padding: 2rem;
-  }
-
-  .value-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
-  }
-
-  /* Footer */
-  .footer {
-    background: rgba(10, 10, 15, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 4rem 0 2rem;
-    margin-top: 4rem;
-    border-top: 1px solid rgba(59, 130, 246, 0.2);
-  }
-
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr repeat(3, 1fr);
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-
-  @media (max-width: 1024px) {
-    .footer-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (max-width: 640px) {
-    .footer-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .footer-brand p {
-    color: var(--text-secondary);
-    margin: 1rem 0;
-    line-height: 1.6;
-  }
-
-  .footer-social {
-    display: flex;
-    gap: 1rem;
-  }
-
-  .footer-social a {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    color: var(--text-secondary);
-    transition: all 0.3s;
-  }
-
-  .footer-social a:hover {
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    color: white;
-    transform: translateY(-3px);
-  }
-
-  .footer-links h4, .footer-contact h4 {
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-  }
-
-  .footer-links ul, .footer-contact ul {
-    list-style: none;
-  }
-
-  .footer-links li, .footer-contact li {
-    margin-bottom: 0.75rem;
-  }
-
-  .footer-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.3s;
-  }
-
-  .footer-links a:hover {
-    color: #3b82f6;
-  }
-
-  .footer-contact li {
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  .footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  @media (max-width: 640px) {
-    .footer-bottom {
-      flex-direction: column;
-      gap: 1rem;
-      text-align: center;
-    }
-  }
-
-  .footer-bottom-links {
-    display: flex;
-    gap: 1.5rem;
-  }
-
-  .footer-bottom-links a {
-    color: var(--text-secondary);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.3s;
-  }
-
-  .footer-bottom-links a:hover {
-    color: #3b82f6;
-  }
-
-  /* Badge */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.3);
-    border-radius: 20px;
-    color: #3b82f6;
-    margin-bottom: 24px;
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-`;
 
 const About = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('mission');
+  const [counters, setCounters] = useState({
+    projects: 0,
+    clients: 0,
+    experience: 0,
+    team: 0
+  });
 
+  // Company Stats
+  const companyStats = [
+    { icon: <Briefcase size={28} />, value: 150, suffix: '+', label: 'Projects Completed', color: '#3b82f6' },
+    { icon: <Users size={28} />, value: 50, suffix: '+', label: 'Happy Clients', color: '#10b981' },
+    { icon: <Award size={28} />, value: 25, suffix: '+', label: 'Industry Awards', color: '#f59e0b' },
+    { icon: <Clock size={28} />, value: 6, suffix: '+', label: 'Years Experience', color: '#8b5cf6' }
+  ];
+
+  // Team Members
   const teamMembers = [
-    { name: 'David Chen', role: 'Founder & CEO', bio: '15+ years in enterprise software, previously led engineering at Fortune 500 companies.', image: 'DC' },
-    { name: 'Sarah Williams', role: 'CTO', bio: 'Architecture expert with deep expertise in scalable cloud infrastructure.', image: 'SW' },
-    { name: 'Marcus Rodriguez', role: 'Head of Product', bio: 'Passionate about bridging business goals with technical excellence.', image: 'MR' },
-    { name: 'Emily Thompson', role: 'Lead Engineer', bio: 'Full-stack specialist focused on delivering performant user experiences.', image: 'ET' }
+    {
+      name: 'Arjun Mehta',
+      role: 'Founder & CEO',
+      bio: '15+ years in software architecture with a passion for AI-driven solutions.',
+      image: 'https://randomuser.me/api/portraits/men/32.jpg',
+      social: { linkedin: '#', twitter: '#', email: '#' }
+    },
+    {
+      name: 'Priya Sharma',
+      role: 'CTO',
+      bio: 'Full-stack expert specializing in scalable cloud architectures.',
+      image: 'https://randomuser.me/api/portraits/women/44.jpg',
+      social: { linkedin: '#', twitter: '#', email: '#' }
+    },
+    {
+      name: 'Rahul Verma',
+      role: 'Lead Designer',
+      bio: 'Award-winning UI/UX designer focused on user-centric experiences.',
+      image: 'https://randomuser.me/api/portraits/men/45.jpg',
+      social: { linkedin: '#', twitter: '#', email: '#' }
+    },
+    {
+      name: 'Neha Gupta',
+      role: 'Head of Product',
+      bio: 'Product strategist with expertise in SaaS and enterprise solutions.',
+      image: 'https://randomuser.me/api/portraits/women/68.jpg',
+      social: { linkedin: '#', twitter: '#', email: '#' }
+    }
   ];
 
-  const companyValues = [
-    { icon: <Target size={32} />, title: 'Purpose-Driven', desc: 'We solve real business challenges, not just technical ones.' },
-    { icon: <HeartHandshake size={32} />, title: 'Partnership Mentality', desc: 'Your success is our success. We grow together.' },
-    { icon: <ShieldCheck size={32} />, title: 'Uncompromising Quality', desc: 'Enterprise-grade standards in everything we deliver.' },
-    { icon: <TrendingUp size={32} />, title: 'Continuous Improvement', desc: 'Always learning, always evolving, always delivering better.' }
+  // Company Values
+  const values = [
+    { icon: <Heart size={24} />, title: 'Passion', desc: 'We love what we do and it shows in every project.', color: '#ef4444' },
+    { icon: <Shield size={24} />, title: 'Integrity', desc: 'Honest communication and transparent processes.', color: '#10b981' },
+    { icon: <Lightbulb size={24} />, title: 'Innovation', desc: 'Constantly learning and implementing new technologies.', color: '#f59e0b' },
+    { icon: <Users size={24} />, title: 'Collaboration', desc: "We work as an extension of your team.", color: '#8b5cf6' }
   ];
 
+  // Milestones
   const milestones = [
-    { year: '2020', title: 'Foundation', desc: 'Started with a vision to transform how businesses leverage technology.' },
-    { year: '2021', title: 'First Product Launch', desc: 'Released our flagship SaaS platform to critical acclaim.' },
-    { year: '2022', title: 'Global Expansion', desc: 'Opened offices in three continents, serving clients worldwide.' },
-    { year: '2023', title: 'Enterprise Recognition', desc: 'Recognized as a leading technology partner by industry analysts.' },
-    { year: '2024', title: 'Innovation Hub', desc: 'Launched our dedicated research and development center.' }
+    { year: '2018', title: 'Company Founded', desc: 'Started with a vision to transform digital experiences.', icon: <Rocket size={20} />, achieved: true },
+    { year: '2020', title: 'First 50 Projects', desc: 'Reached milestone of 50 successful deliveries.', icon: <Target size={20} />, achieved: true },
+    { year: '2022', title: 'Global Expansion', desc: 'Expanded operations to 12+ countries worldwide.', icon: <Globe size={20} />, achieved: true },
+    { year: '2024', title: 'AI Innovation Lab', desc: 'Launched dedicated AI research division.', icon: <Sparkles size={20} />, achieved: true }
   ];
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    
-    const styleSheet = document.createElement("style");
-    styleSheet.textContent = styles;
-    document.head.appendChild(styleSheet);
+  // Certifications
+  const certifications = [
+    { name: 'ISO 27001 Certified', icon: <Shield size={20} />, year: '2023' },
+    { name: 'AWS Advanced Partner', icon: <Cloud size={20} />, year: '2023' },
+    { name: 'Google Cloud Partner', icon: <Globe size={20} />, year: '2024' },
+    { name: 'Microsoft Gold Partner', icon: <Award size={20} />, year: '2024' }
+  ];
 
-    const observerCallback = (entries) => {
+  // Industries Served
+  const industries = [
+    'Healthcare', 'Education', 'Finance', 'Retail', 
+    'Manufacturing', 'Logistics', 'Real Estate', 'Entertainment'
+  ];
+
+  // Counter Animation
+  useEffect(() => {
+    const animateCounters = () => {
+      const targets = { projects: 150, clients: 50, experience: 6, team: 25 };
+      const duration = 2000;
+      const interval = 20;
+      const steps = duration / interval;
+      
+      let currentStep = 0;
+      const timer = setInterval(() => {
+        currentStep++;
+        const progress = currentStep / steps;
+        
+        setCounters({
+          projects: Math.floor(targets.projects * progress),
+          clients: Math.floor(targets.clients * progress),
+          experience: Math.floor(targets.experience * progress),
+          team: Math.floor(targets.team * progress)
+        });
+        
+        if (currentStep >= steps) {
+          setCounters(targets);
+          clearInterval(timer);
+        }
+      }, interval);
+    };
+
+    const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('active');
+          animateCounters();
+          observer.disconnect();
         }
       });
-    };
+    }, { threshold: 0.5 });
 
-    const observer = new IntersectionObserver(observerCallback, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -100px 0px'
-    });
+    const statsSection = document.querySelector('.about-stats-section');
+    if (statsSection) observer.observe(statsSection);
 
-    const elements = document.querySelectorAll('.reveal');
-    elements.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
 
-    return () => {
-      observer.disconnect();
-      document.head.removeChild(styleSheet);
-    };
+  // Scroll Reveal
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <>
-      <div style={{ paddingTop: '80px' }}>
-        {/* Hero Section */}
-        <section className="hero">
-          <div className="container">
-            <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
-              <div className="animate-fade-up badge">
-                <Sparkles size={16} /> Our Story
-              </div>
-              <h1 className="hero-title animate-fade-up" style={{ animationDelay: '0.1s' }}>
-                We Build Technology That <span className="text-gradient">Solves Real Problems</span>
-              </h1>
-              <p className="hero-subtitle animate-fade-up" style={{ animationDelay: '0.2s' }}>
-                ByteSoft is not just a service company — we are a product-driven innovation partner dedicated to transforming ideas into scalable realities.
-              </p>
+    <div className="about-page">
+      {/* Background Effects */}
+      <div className="about-bg-mesh" />
+      
+      {/* ========== HERO SECTION ========== */}
+      <section className="about-hero">
+        <div className="about-hero-bg">
+          <div className="about-hero-overlay" />
+        </div>
+        <div className="container">
+          <div className="about-hero-content reveal-on-scroll">
+            <div className="about-hero-badge">
+              <Sparkles size={16} />
+              <span>Our Story</span>
             </div>
-          </div>
-        </section>
-
-        {/* Company Stats Banner */}
-        <section className="section container">
-          <div className="glass glowing-border card-3d" style={{ padding: '3rem', borderRadius: '24px' }}>
-            <div className="stats-grid">
-              <div style={{ textAlign: 'center' }}>
-                <div className="stat-number text-gradient">50+</div>
-                <div className="stat-label">Enterprise Clients</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div className="stat-number text-gradient">99.9%</div>
-                <div className="stat-label">Uptime Record</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div className="stat-number text-gradient">24/7</div>
-                <div className="stat-label">Support Coverage</div>
-              </div>
-              <div style={{ textAlign: 'center' }}>
-                <div className="stat-number text-gradient">4.9★</div>
-                <div className="stat-label">Client Rating</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Vision Section */}
-        <section className="section container reveal">
-          <div className="glass glowing-border card-3d" style={{
-            position: 'relative',
-            overflow: 'hidden',
-            padding: '80px 40px',
-            textAlign: 'center',
-            borderRadius: '24px'
-          }}>
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: aboutVision ? `url(${aboutVision})` : 'linear-gradient(135deg, #1e1e2e, #0a0a0f)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              opacity: 0.3,
-              zIndex: -1
-            }}></div>
-            <div style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(135deg, rgba(10, 10, 15, 0.95), rgba(10, 10, 15, 0.85))',
-              zIndex: -1
-            }}></div>
-            <Target size={48} color="#3b82f6" style={{ margin: '0 auto 24px' }} />
-            <h2 style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 700, maxWidth: 900, margin: '0 auto', lineHeight: 1.3 }}>
-              "To build impactful digital products used globally, bridging the gap between complex engineering and elegant user experiences."
-            </h2>
-            <p style={{ marginTop: '2rem', color: 'var(--text-secondary)', fontSize: '1.1rem' }}>
-              — Our founding principle since day one
+            <h1 className="about-hero-title">
+              Crafting Digital <span className="gradient-text">Excellence</span> Since 2018
+            </h1>
+            <p className="about-hero-desc">
+              We're a team of passionate technologists, designers, and strategists 
+              dedicated to building innovative software solutions that drive real business growth.
             </p>
+            <div className="about-hero-buttons">
+              <button className="btn-primary">Join Our Journey <ArrowRight size={18} /></button>
+              <button className="btn-outline">Meet The Team <Users size={18} /></button>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Our Story Timeline */}
-        <section className="section container">
-          <div className="section-header reveal">
-            <h2 className="section-title">The ByteSoft Journey</h2>
-            <p className="section-subtitle">How we started and where we are heading.</p>
+      {/* ========== COMPANY VALUES SECTION ========== */}
+      <section className="values-section">
+        <div className="container">
+          <div className="section-header reveal-on-scroll">
+            <span className="section-badge">Our Philosophy</span>
+            <h2 className="section-title">What Drives <span className="gradient-text">Us Forward</span></h2>
+            <p className="section-subtitle">Core values that shape our culture and define our approach</p>
+          </div>
+
+          <div className="values-grid">
+            {values.map((value, idx) => (
+              <div key={idx} className="value-card reveal-on-scroll" style={{ transitionDelay: `${idx * 0.1}s` }}>
+                <div className="value-icon" style={{ background: `${value.color}15`, color: value.color }}>
+                  {value.icon}
+                </div>
+                <h3>{value.title}</h3>
+                <p>{value.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== STATS SECTION ========== */}
+      <section className="about-stats-section">
+        <div className="container">
+          <div className="stats-wrapper">
+            {companyStats.map((stat, idx) => (
+              <div key={idx} className="stat-item reveal-on-scroll">
+                <div className="stat-icon" style={{ color: stat.color }}>{stat.icon}</div>
+                <div className="stat-number">
+                  {stat.value === 150 ? counters.projects : 
+                   stat.value === 50 ? counters.clients :
+                   stat.value === 25 ? counters.team : counters.experience}
+                  {stat.suffix}
+                </div>
+                <div className="stat-label">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== OUR STORY / MISSION SECTION ========== */}
+      <section className="story-section">
+        <div className="container">
+          <div className="story-grid">
+            <div className="story-content reveal-on-scroll">
+              <div className="tabs-container">
+                <div className="tabs-header">
+                  <button 
+                    className={`tab-btn ${activeTab === 'mission' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('mission')}
+                  >
+                    <Flag size={18} /> Our Mission
+                  </button>
+                  <button 
+                    className={`tab-btn ${activeTab === 'vision' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('vision')}
+                  >
+                    <Eye size={18} /> Our Vision
+                  </button>
+                  <button 
+                    className={`tab-btn ${activeTab === 'story' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('story')}
+                  >
+                    <BookOpen size={18} /> Our Story
+                  </button>
+                </div>
+                <div className="tabs-content">
+                  {activeTab === 'mission' && (
+                    <div className="tab-pane">
+                      <h3>Empowering Businesses Through Technology</h3>
+                      <p>
+                        Our mission is to democratize access to cutting-edge technology by delivering 
+                        enterprise-grade software solutions that are accessible, scalable, and transformative. 
+                        We believe that every business, regardless of size, deserves world-class digital tools 
+                        to compete and thrive in the modern economy.
+                      </p>
+                      <div className="mission-points">
+                        <div><CheckCircle size={18} /> Innovation First</div>
+                        <div><CheckCircle size={18} /> Client Success Focus</div>
+                        <div><CheckCircle size={18} /> Quality Excellence</div>
+                      </div>
+                    </div>
+                  )}
+                  {activeTab === 'vision' && (
+                    <div className="tab-pane">
+                      <h3>Shaping The Future of Digital Innovation</h3>
+                      <p>
+                        We envision a world where technology seamlessly integrates into every aspect of 
+                        business, creating intelligent systems that anticipate needs, automate processes, 
+                        and unlock human potential. By 2030, we aim to be the global leader in AI-powered 
+                        business solutions.
+                      </p>
+                      <div className="vision-points">
+                        <div><Target size={18} /> Global Leader by 2030</div>
+                        <div><Target size={18} /> 1000+ Successful Projects</div>
+                        <div><Target size={18} /> AI-Driven Solutions</div>
+                      </div>
+                    </div>
+                  )}
+                  {activeTab === 'story' && (
+                    <div className="tab-pane">
+                      <h3>From Humble Beginnings to Global Impact</h3>
+                      <p>
+                        Founded in a small garage in 2018, ByteSoft started with just 3 passionate developers 
+                        and a dream to build exceptional software. Today, we've grown into a team of 25+ 
+                        talented professionals serving clients across 12 countries. Our journey has been 
+                        fueled by countless cups of coffee, late-night coding sessions, and an unwavering 
+                        commitment to excellence.
+                      </p>
+                      <div className="story-highlight">
+                        <Crown size={20} /> 150+ Projects • 50+ Clients • 98% Retention Rate
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="story-image reveal-on-scroll">
+              <div className="image-card">
+                <img 
+                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&q=80" 
+                  alt="Team working"
+                />
+                <div className="image-badge">
+                  <Coffee size={20} />
+                  <span>1000+ Cups of Coffee</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== MILESTONES TIMELINE ========== */}
+      <section className="milestones-section">
+        <div className="container">
+          <div className="section-header reveal-on-scroll">
+            <span className="section-badge">Our Journey</span>
+            <h2 className="section-title">Key <span className="gradient-text">Milestones</span></h2>
+            <p className="section-subtitle">Celebrating our growth and achievements along the way</p>
           </div>
 
           <div className="timeline">
-            {[
-              { 
-                phase: 'The Spark', 
-                title: 'Why We Started', 
-                desc: 'Frustrated by agencies that over-promised and under-delivered, we founded ByteSoft to bring enterprise-level engineering to businesses of all sizes.' 
-              },
-              { 
-                phase: 'The Evolution', 
-                title: 'Product-Led Growth', 
-                desc: 'We began building our own internal tools to optimize our workflows, which quickly evolved into standalone platforms trusted by industry leaders.' 
-              },
-              { 
-                phase: 'The Mission', 
-                title: 'Solving Real-World Problems', 
-                desc: 'Today, our mission remains unchanged: leveraging scalable technology to eliminate inefficiencies and drive measurable returns for our partners.' 
-              }
-            ].map((item, index) => (
-              <div className="timeline-item reveal" key={index} style={{ transitionDelay: `${index * 0.1}s` }}>
-                <div className="timeline-icon">{index + 1}</div>
-                <div className="timeline-content glass card-3d glowing-border">
-                  <div style={{ color: '#3b82f6', fontWeight: 700, marginBottom: '8px' }}>{item.phase}</div>
-                  <h4 style={{ fontSize: '1.5rem', marginBottom: '12px' }}>{item.title}</h4>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.6 }}>{item.desc}</p>
+            {milestones.map((milestone, idx) => (
+              <div key={idx} className={`timeline-item ${idx % 2 === 0 ? 'left' : 'right'} reveal-on-scroll`}>
+                <div className="timeline-dot">
+                  <div className="timeline-icon">{milestone.icon}</div>
+                </div>
+                <div className="timeline-content">
+                  <div className="timeline-year">{milestone.year}</div>
+                  <h3>{milestone.title}</h3>
+                  <p>{milestone.desc}</p>
+                  {milestone.achieved && <div className="timeline-badge">Achieved ✓</div>}
                 </div>
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Company Values */}
-        <section className="section container">
-          <div className="section-header reveal">
-            <h2 className="section-title">The ByteSoft Difference</h2>
-            <p className="section-subtitle">We don't just write code; we engineer success.</p>
+      {/* ========== TEAM SECTION ========== */}
+      <section className="team-section">
+        <div className="container">
+          <div className="section-header reveal-on-scroll">
+            <span className="section-badge">Our Heroes</span>
+            <h2 className="section-title">Meet The <span className="gradient-text">Leadership</span></h2>
+            <p className="section-subtitle">The brilliant minds behind our success story</p>
           </div>
 
-          <div className="value-props">
-            {companyValues.map((value, index) => (
-              <div key={index} className="value-item glass glowing-border card-3d reveal" style={{ transitionDelay: `${index * 0.1}s`, borderRadius: '24px' }}>
-                <div className="value-icon">{value.icon}</div>
-                <h4 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>{value.title}</h4>
-                <p style={{ color: 'var(--text-secondary)' }}>{value.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Approach & Expertise */}
-        <section className="section container">
-          <div className="split-section">
-            <div className="reveal">
-              <h2 className="section-title" style={{ fontSize: '2rem', marginBottom: '24px', textAlign: 'left' }}>Our Engineering Approach</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div className="glass" style={{ padding: '28px', borderLeft: '4px solid #3b82f6', borderRadius: '16px' }}>
-                  <h4 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.2rem', marginBottom: '12px' }}>
-                    <Lightbulb size={24} color="#3b82f6" /> Problem-First Thinking
-                  </h4>
-                  <p style={{ color: 'var(--text-secondary)' }}>We analyze business constraints before writing a single line of code, ensuring every solution addresses real needs.</p>
-                </div>
-                <div className="glass" style={{ padding: '28px', borderLeft: '4px solid #3b82f6', borderRadius: '16px' }}>
-                  <h4 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.2rem', marginBottom: '12px' }}>
-                    <Code2 size={24} color="#3b82f6" /> Clean Architecture
-                  </h4>
-                  <p style={{ color: 'var(--text-secondary)' }}>We build modular, maintainable systems that don't accrue technical debt, ensuring long-term sustainability.</p>
-                </div>
-                <div className="glass" style={{ padding: '28px', borderLeft: '4px solid #3b82f6', borderRadius: '16px' }}>
-                  <h4 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.2rem', marginBottom: '12px' }}>
-                    <Server size={24} color="#3b82f6" /> Scalable Systems
-                  </h4>
-                  <p style={{ color: 'var(--text-secondary)' }}>Infrastructure designed to handle your first 100 users and your next million without compromise.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="reveal" style={{ transitionDelay: '0.2s' }}>
-              <h2 className="section-title" style={{ fontSize: '2rem', marginBottom: '24px', textAlign: 'left' }}>Technology Expertise</h2>
-              <div className="glass card-3d glowing-border" style={{ padding: '40px', borderRadius: '24px', height: '100%' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ width: '64px', height: '64px', margin: '0 auto 16px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Code2 size={40} color="#3b82f6" />
-                    </div>
-                    <h4>Frontend</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '8px' }}>React, Vue, Next.js</p>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ width: '64px', height: '64px', margin: '0 auto 16px', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Server size={40} color="#8b5cf6" />
-                    </div>
-                    <h4>Backend</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '8px' }}>Node.js, Python, Go</p>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ width: '64px', height: '64px', margin: '0 auto 16px', background: 'rgba(6, 182, 212, 0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Cloud size={40} color="#06b6d4" />
-                    </div>
-                    <h4>Cloud</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '8px' }}>AWS, Azure, GCP</p>
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ width: '64px', height: '64px', margin: '0 auto 16px', background: 'rgba(236, 72, 153, 0.1)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Cpu size={40} color="#ec4899" />
-                    </div>
-                    <h4>Infrastructure</h4>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '8px' }}>Kubernetes, Terraform</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Leadership Team */}
-        <section className="section container reveal">
-          <div className="section-header">
-            <h2 className="section-title">Leadership Team</h2>
-            <p className="section-subtitle">The experts behind our success</p>
-          </div>
           <div className="team-grid">
-            {teamMembers.map((member, index) => (
-              <div key={index} className="team-card glass glowing-border card-3d reveal" style={{ transitionDelay: `${index * 0.1}s` }}>
-                <div className="team-image">{member.image}</div>
-                <h4>{member.name}</h4>
-                <div className="team-role">{member.role}</div>
-                <p className="team-bio">{member.bio}</p>
+            {teamMembers.map((member, idx) => (
+              <div key={idx} className="team-card reveal-on-scroll" style={{ transitionDelay: `${idx * 0.1}s` }}>
+                <div className="team-image">
+                  <img src={member.image} alt={member.name} />
+                  <div className="team-social">
+                    <a href={member.social.linkedin}><Linkedin size={18} /></a>
+                    <a href={member.social.twitter}><Twitter size={18} /></a>
+                    <a href={member.social.email}><Mail size={18} /></a>
+                  </div>
+                </div>
+                <div className="team-info">
+                  <h3>{member.name}</h3>
+                  <div className="team-role">{member.role}</div>
+                  <p>{member.bio}</p>
+                </div>
               </div>
             ))}
           </div>
-        </section>
 
-        {/* Milestones Timeline */}
-        <section className="section container">
-          <div className="glass bg-gradient card-3d glowing-border" style={{ padding: '60px 40px', borderRadius: '24px' }}>
-            <div className="section-header">
-              <h2 className="section-title">Our Journey</h2>
-              <p className="section-subtitle">Key milestones that shaped our company</p>
+          <div className="team-cta reveal-on-scroll">
+            <p>Want to join our amazing team?</p>
+            <button className="btn-outline">View Open Positions <ArrowRight size={16} /></button>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== CERTIFICATIONS SECTION ========== */}
+      <section className="certifications-section">
+        <div className="container">
+          <div className="certs-grid">
+            <div className="certs-content reveal-on-scroll">
+              <span className="section-badge">Certifications</span>
+              <h2>Trusted by <span className="gradient-text">Industry Leaders</span></h2>
+              <p>Our commitment to quality and security is backed by leading industry certifications.</p>
+              <div className="certs-list">
+                {certifications.map((cert, idx) => (
+                  <div key={idx} className="cert-item">
+                    {cert.icon}
+                    <div>
+                      <strong>{cert.name}</strong>
+                      <span>Since {cert.year}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div style={{ position: 'relative', padding: '2rem 0' }}>
-              {milestones.map((milestone, index) => (
-                <div key={index} style={{ display: 'flex', marginBottom: '2rem', position: 'relative' }}>
-                  <div style={{ minWidth: '120px', textAlign: 'right', paddingRight: '2rem' }}>
-                    <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#3b82f6' }}>{milestone.year}</div>
-                  </div>
-                  <div style={{ flex: 1, paddingLeft: '2rem', borderLeft: '2px solid rgba(59, 130, 246, 0.3)' }}>
-                    <h4 style={{ fontSize: '1.2rem', marginBottom: '8px' }}>{milestone.title}</h4>
-                    <p style={{ color: 'var(--text-secondary)' }}>{milestone.desc}</p>
-                  </div>
+            <div className="certs-image reveal-on-scroll">
+              <div className="award-grid">
+                <div className="award-card">
+                  <Trophy size={32} />
+                  <div>Best Software Agency 2023</div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Culture Section */}
-        <section className="section container reveal">
-          <div className="glass card-3d glowing-border" style={{ padding: '60px', textAlign: 'center', borderRadius: '24px' }}>
-            <Users size={48} color="#8b5cf6" style={{ margin: '0 auto 24px' }} />
-            <h2 className="section-title">Built by Passionate Professionals</h2>
-            <p className="section-subtitle" style={{ marginBottom: '40px' }}>Our culture is rooted in core pillars that guide every line of code we write.</p>
-            
-            <div className="stats-grid">
-              <div>
-                <div className="stat-number text-gradient" style={{ fontSize: '2rem' }}>Transparency</div>
-                <div className="stat-label">Open communication at every level</div>
-              </div>
-              <div>
-                <div className="stat-number text-gradient" style={{ fontSize: '2rem' }}>Innovation</div>
-                <div className="stat-label">Pushing boundaries daily</div>
-              </div>
-              <div>
-                <div className="stat-number text-gradient" style={{ fontSize: '2rem' }}>Reliability</div>
-                <div className="stat-label">Consistent delivery excellence</div>
-              </div>
-              <div>
-                <div className="stat-number text-gradient" style={{ fontSize: '2rem' }}>Excellence</div>
-                <div className="stat-label">Quality without compromise</div>
+                <div className="award-card">
+                  <Medal size={32} />
+                  <div>Top Rated on Clutch</div>
+                </div>
+                <div className="award-card">
+                  <Diamond size={32} />
+                  <div>Excellence in Innovation</div>
+                </div>
+                <div className="award-card">
+                  <BadgeCheck size={32} />
+                  <div>Verified Partner</div>
+                </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Partners & Certifications */}
-        <section className="section container reveal">
-          <div className="glass" style={{ padding: '60px', textAlign: 'center', borderRadius: '24px' }}>
-            <h2 className="section-title">Trusted Partnerships</h2>
-            <p className="section-subtitle" style={{ marginBottom: '3rem' }}>Proud to work with industry leaders</p>
-            <div className="stats-grid">
-              <div>
-                <Award size={40} color="#3b82f6" style={{ margin: '0 auto 1rem' }} />
-                <div className="stat-label">AWS Advanced Partner</div>
+      {/* ========== INDUSTRIES WE SERVE ========== */}
+      <section className="industries-section">
+        <div className="container">
+          <div className="section-header reveal-on-scroll">
+            <span className="section-badge">Industries</span>
+            <h2 className="section-title">Sectors We <span className="gradient-text">Transform</span></h2>
+            <p className="section-subtitle">Delivering tailored solutions across diverse industries</p>
+          </div>
+
+          <div className="industries-cloud">
+            {industries.map((industry, idx) => (
+              <div key={idx} className="industry-tag reveal-on-scroll">
+                {industry}
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== TESTIMONIALS ========== */}
+      <section className="about-testimonials">
+        <div className="container">
+          <div className="testimonial-feature reveal-on-scroll">
+            <div className="testimonial-quote-icon">
+              <Quote size={48} />
+            </div>
+            <p className="testimonial-feature-text">
+              "ByteSoft has been an invaluable partner in our digital transformation journey. 
+              Their technical expertise, commitment to quality, and client-centric approach 
+              set them apart. They don't just build software; they build success stories."
+            </p>
+            <div className="testimonial-feature-author">
+              <img src="https://randomuser.me/api/portraits/women/1.jpg" alt="Client" />
               <div>
-                <ShieldCheck size={40} color="#3b82f6" style={{ margin: '0 auto 1rem' }} />
-                <div className="stat-label">ISO 27001 Certified</div>
-              </div>
-              <div>
-                <Globe size={40} color="#3b82f6" style={{ margin: '0 auto 1rem' }} />
-                <div className="stat-label">Global Operations</div>
-              </div>
-              <div>
-                <Briefcase size={40} color="#3b82f6" style={{ margin: '0 auto 1rem' }} />
-                <div className="stat-label">Enterprise Ready</div>
+                <strong>Sarah Johnson</strong>
+                <span>CEO, TechCorp International</span>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Final CTA */}
-        <section className="section container reveal" style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <div className="final-cta" style={{
-            background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))',
-            padding: '80px 40px',
-            borderRadius: '32px',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <h2 className="section-title" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>Start Your Journey With <span className="text-gradient">ByteSoft</span></h2>
-            <p className="section-subtitle" style={{ marginBottom: '40px', fontSize: '1.2rem' }}>Let's build the future, together.</p>
-            <button className="btn btn-primary" style={{ padding: '20px 48px', fontSize: '1.2rem', borderRadius: '12px' }}>
-              Partner With Us <ArrowRight size={24} />
-            </button>
+      {/* ========== CTA SECTION ========== */}
+      <section className="about-cta">
+        <div className="container">
+          <div className="cta-card reveal-on-scroll">
+            <div className="cta-content">
+              <HeartHandshake size={48} color="#3b82f6" />
+              <h2>Ready to Start Your Journey With Us?</h2>
+              <p>Let's discuss how we can help transform your business with cutting-edge solutions.</p>
+              <div className="cta-buttons">
+                <button className="btn-primary btn-large">Start a Project <ArrowRight size={18} /></button>
+                <button className="btn-outline btn-large">Schedule a Meeting <Calendar size={18} /></button>
+              </div>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Footer */}
-        
-      </div>
-    </>
+      <style jsx="true">{`
+        /* ========== ABOUT PAGE STYLES ========== */
+        .about-page {
+          position: relative;
+          background: #030712;
+          color: #ffffff;
+          font-family: 'Inter', sans-serif;
+          overflow-x: hidden;
+        }
+
+        .about-bg-mesh {
+          position: fixed;
+          inset: 0;
+          background: 
+            radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+          pointer-events: none;
+          z-index: -2;
+        }
+
+        .container {
+          max-width: 1280px;
+          margin: 0 auto;
+          padding: 0 24px;
+        }
+
+        /* Reveal Animations */
+        .reveal-on-scroll {
+          opacity: 0;
+          transform: translateY(30px);
+          transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal-on-scroll.revealed {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .gradient-text {
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+        }
+
+        /* Section Header */
+        .section-header {
+          text-align: center;
+          margin-bottom: 60px;
+        }
+
+        .section-badge {
+          display: inline-block;
+          padding: 6px 16px;
+          border-radius: 100px;
+          background: rgba(59, 130, 246, 0.1);
+          border: 1px solid rgba(59, 130, 246, 0.2);
+          color: #60a5fa;
+          font-size: 0.75rem;
+          font-weight: 600;
+          letter-spacing: 1px;
+          margin-bottom: 16px;
+        }
+
+        .section-title {
+          font-size: clamp(2rem, 4vw, 3rem);
+          font-weight: 700;
+          margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+          color: #94a3b8;
+          max-width: 600px;
+          margin: 0 auto;
+          font-size: 1rem;
+        }
+
+        /* Buttons */
+        .btn-primary, .btn-outline {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 28px;
+          border-radius: 12px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          border: none;
+          font-size: 0.9rem;
+        }
+
+        .btn-primary {
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          color: white;
+        }
+
+        .btn-primary:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 30px -8px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-outline {
+          background: transparent;
+          border: 1.5px solid rgba(255, 255, 255, 0.2);
+          color: white;
+        }
+
+        .btn-outline:hover {
+          border-color: #3b82f6;
+          background: rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-large {
+          padding: 14px 32px;
+          font-size: 1rem;
+        }
+
+        /* ========== HERO SECTION ========== */
+        .about-hero {
+          position: relative;
+          min-height: 70vh;
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+        }
+
+        .about-hero-bg {
+          position: absolute;
+          inset: 0;
+          background: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=80') center/cover;
+        }
+
+        .about-hero-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(3, 7, 18, 0.9), rgba(3, 7, 18, 0.7));
+        }
+
+        .about-hero-content {
+          position: relative;
+          text-align: center;
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 120px 0;
+        }
+
+        .about-hero-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 6px 16px;
+          border-radius: 100px;
+          background: rgba(59, 130, 246, 0.15);
+          border: 1px solid rgba(59, 130, 246, 0.3);
+          font-size: 0.8rem;
+          margin-bottom: 24px;
+        }
+
+        .about-hero-title {
+          font-size: clamp(2.5rem, 5vw, 4rem);
+          font-weight: 800;
+          margin-bottom: 20px;
+        }
+
+        .about-hero-desc {
+          color: #94a3b8;
+          font-size: 1.1rem;
+          line-height: 1.6;
+          margin-bottom: 32px;
+        }
+
+        .about-hero-buttons {
+          display: flex;
+          gap: 16px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        /* ========== VALUES SECTION ========== */
+        .values-section {
+          padding: 80px 0;
+        }
+
+        .values-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+          gap: 30px;
+        }
+
+        .value-card {
+          text-align: center;
+          padding: 40px 24px;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+          transform: translateY(-5px);
+          border-color: rgba(59, 130, 246, 0.3);
+          background: rgba(59, 130, 246, 0.03);
+        }
+
+        .value-icon {
+          width: 60px;
+          height: 60px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 20px;
+        }
+
+        .value-card h3 {
+          font-size: 1.3rem;
+          margin-bottom: 12px;
+        }
+
+        .value-card p {
+          color: #94a3b8;
+          line-height: 1.6;
+        }
+
+        /* ========== STATS SECTION ========== */
+        .about-stats-section {
+          padding: 60px 0;
+          background: rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-wrapper {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 30px;
+          text-align: center;
+        }
+
+        .stat-item {
+          padding: 20px;
+        }
+
+        .stat-icon {
+          margin-bottom: 16px;
+        }
+
+        .stat-number {
+          font-size: 2.5rem;
+          font-weight: 800;
+          margin-bottom: 8px;
+        }
+
+        .stat-label {
+          color: #64748b;
+          font-size: 0.9rem;
+        }
+
+        /* ========== STORY SECTION ========== */
+        .story-section {
+          padding: 80px 0;
+        }
+
+        .story-grid {
+          display: grid;
+          grid-template-columns: 1fr 0.8fr;
+          gap: 60px;
+          align-items: center;
+        }
+
+        .tabs-container {
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          overflow: hidden;
+        }
+
+        .tabs-header {
+          display: flex;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 16px;
+          background: transparent;
+          border: none;
+          color: #94a3b8;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+          color: #3b82f6;
+          background: rgba(59, 130, 246, 0.1);
+          border-bottom: 2px solid #3b82f6;
+        }
+
+        .tabs-content {
+          padding: 32px;
+        }
+
+        .tab-pane h3 {
+          font-size: 1.5rem;
+          margin-bottom: 16px;
+        }
+
+        .tab-pane p {
+          color: #94a3b8;
+          line-height: 1.6;
+          margin-bottom: 24px;
+        }
+
+        .mission-points, .vision-points {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .mission-points div, .vision-points div {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          color: #10b981;
+        }
+
+        .story-highlight {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          padding: 12px 20px;
+          background: rgba(59, 130, 246, 0.1);
+          border-radius: 12px;
+          color: #3b82f6;
+          font-weight: 600;
+        }
+
+        .story-image .image-card {
+          position: relative;
+          border-radius: 20px;
+          overflow: hidden;
+        }
+
+        .story-image img {
+          width: 100%;
+          height: auto;
+          border-radius: 20px;
+        }
+
+        .image-badge {
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 8px 16px;
+          background: rgba(0, 0, 0, 0.8);
+          backdrop-filter: blur(10px);
+          border-radius: 40px;
+          font-size: 0.8rem;
+        }
+
+        /* ========== MILESTONES TIMELINE ========== */
+        .milestones-section {
+          padding: 80px 0;
+          background: rgba(0, 0, 0, 0.3);
+        }
+
+        .timeline {
+          position: relative;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .timeline::before {
+          content: '';
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 2px;
+          height: 100%;
+          background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+        }
+
+        .timeline-item {
+          position: relative;
+          margin-bottom: 50px;
+        }
+
+        .timeline-item.left {
+          padding-right: calc(50% + 30px);
+        }
+
+        .timeline-item.right {
+          padding-left: calc(50% + 30px);
+        }
+
+        .timeline-dot {
+          position: absolute;
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 50px;
+          height: 50px;
+          background: #1e293b;
+          border: 2px solid #3b82f6;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1;
+        }
+
+        .timeline-icon {
+          color: #3b82f6;
+        }
+
+        .timeline-content {
+          background: rgba(255, 255, 255, 0.02);
+          padding: 20px;
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .timeline-year {
+          font-size: 0.8rem;
+          color: #3b82f6;
+          font-weight: 600;
+          margin-bottom: 8px;
+        }
+
+        .timeline-content h3 {
+          font-size: 1.1rem;
+          margin-bottom: 8px;
+        }
+
+        .timeline-content p {
+          color: #94a3b8;
+          font-size: 0.9rem;
+        }
+
+        .timeline-badge {
+          display: inline-block;
+          margin-top: 10px;
+          padding: 4px 12px;
+          background: rgba(16, 185, 129, 0.2);
+          border-radius: 20px;
+          font-size: 0.7rem;
+          color: #10b981;
+        }
+
+        /* ========== TEAM SECTION ========== */
+        .team-section {
+          padding: 80px 0;
+        }
+
+        .team-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 30px;
+          margin-bottom: 50px;
+        }
+
+        .team-card {
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 20px;
+          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+          transform: translateY(-5px);
+          border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .team-image {
+          position: relative;
+          aspect-ratio: 1;
+          overflow: hidden;
+        }
+
+        .team-image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .team-social {
+          position: absolute;
+          bottom: -50px;
+          left: 0;
+          right: 0;
+          display: flex;
+          justify-content: center;
+          gap: 12px;
+          padding: 12px;
+          background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+          transition: bottom 0.3s ease;
+        }
+
+        .team-card:hover .team-social {
+          bottom: 0;
+        }
+
+        .team-social a {
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: #3b82f6;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          transition: all 0.3s ease;
+        }
+
+        .team-social a:hover {
+          transform: scale(1.1);
+        }
+
+        .team-info {
+          padding: 20px;
+          text-align: center;
+        }
+
+        .team-info h3 {
+          font-size: 1.2rem;
+          margin-bottom: 5px;
+        }
+
+        .team-role {
+          color: #3b82f6;
+          font-size: 0.8rem;
+          margin-bottom: 12px;
+        }
+
+        .team-info p {
+          color: #94a3b8;
+          font-size: 0.9rem;
+          line-height: 1.5;
+        }
+
+        .team-cta {
+          text-align: center;
+          padding: 40px;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 20px;
+        }
+
+        .team-cta p {
+          font-size: 1.2rem;
+          margin-bottom: 20px;
+        }
+
+        /* ========== CERTIFICATIONS SECTION ========== */
+        .certifications-section {
+          padding: 80px 0;
+          background: rgba(0, 0, 0, 0.3);
+        }
+
+        .certs-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 60px;
+          align-items: center;
+        }
+
+        .certs-content .section-badge {
+          display: inline-block;
+          margin-bottom: 16px;
+        }
+
+        .certs-content h2 {
+          font-size: 2rem;
+          margin-bottom: 16px;
+        }
+
+        .certs-content p {
+          color: #94a3b8;
+          margin-bottom: 32px;
+        }
+
+        .certs-list {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .cert-item {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 16px;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 12px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .cert-item div {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .cert-item span {
+          font-size: 0.8rem;
+          color: #64748b;
+        }
+
+        .award-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 20px;
+        }
+
+        .award-card {
+          text-align: center;
+          padding: 30px 20px;
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          transition: all 0.3s ease;
+        }
+
+        .award-card:hover {
+          transform: translateY(-5px);
+          border-color: #3b82f6;
+        }
+
+        .award-card svg {
+          color: #f59e0b;
+          margin-bottom: 12px;
+        }
+
+        /* ========== INDUSTRIES SECTION ========== */
+        .industries-section {
+          padding: 80px 0;
+        }
+
+        .industries-cloud {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 16px;
+        }
+
+        .industry-tag {
+          padding: 12px 28px;
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 40px;
+          font-weight: 500;
+          transition: all 0.3s ease;
+          cursor: default;
+        }
+
+        .industry-tag:hover {
+          background: rgba(59, 130, 246, 0.1);
+          border-color: #3b82f6;
+          transform: translateY(-2px);
+        }
+
+        /* ========== TESTIMONIALS SECTION ========== */
+        .about-testimonials {
+          padding: 80px 0;
+          background: rgba(0, 0, 0, 0.3);
+        }
+
+        .testimonial-feature {
+          text-align: center;
+          max-width: 800px;
+          margin: 0 auto;
+        }
+
+        .testimonial-quote-icon {
+          color: #3b82f6;
+          opacity: 0.5;
+          margin-bottom: 20px;
+        }
+
+        .testimonial-feature-text {
+          font-size: 1.3rem;
+          line-height: 1.6;
+          color: #e2e8f0;
+          margin-bottom: 30px;
+        }
+
+        .testimonial-feature-author {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+        }
+
+        .testimonial-feature-author img {
+          width: 60px;
+          height: 60px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+
+        .testimonial-feature-author strong {
+          display: block;
+          margin-bottom: 4px;
+        }
+
+        .testimonial-feature-author span {
+          font-size: 0.8rem;
+          color: #64748b;
+        }
+
+        /* ========== CTA SECTION ========== */
+        .about-cta {
+          padding: 80px 0;
+        }
+
+        .cta-card {
+          background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+          border-radius: 32px;
+          padding: 64px;
+          text-align: center;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-content h2 {
+          font-size: clamp(1.8rem, 3vw, 2.5rem);
+          margin: 20px 0 16px;
+        }
+
+        .cta-content p {
+          color: #94a3b8;
+          margin-bottom: 32px;
+        }
+
+        .cta-buttons {
+          display: flex;
+          gap: 16px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 968px) {
+          .story-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .certs-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .stats-wrapper {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          
+          .timeline::before {
+            left: 30px;
+          }
+          
+          .timeline-item.left,
+          .timeline-item.right {
+            padding-left: 70px;
+            padding-right: 0;
+          }
+          
+          .timeline-dot {
+            left: 30px;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .stats-wrapper {
+            grid-template-columns: 1fr;
+          }
+          
+          .values-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .team-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .award-grid {
+            grid-template-columns: 1fr;
+          }
+          
+          .tabs-header {
+            flex-direction: column;
+          }
+          
+          .cta-card {
+            padding: 32px;
+          }
+        }
+      `}</style>
+    </div>
   );
 };
 
