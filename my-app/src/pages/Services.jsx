@@ -1,101 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { 
-  Rocket, Code, Cloud, Smartphone, Bot, ShieldCheck, 
-  ArrowRight, Database, Layout, MessageSquare, 
-  Sparkles, Layers, Cpu, Globe2, Search, Monitor, 
-  CheckCircle2, ChevronRight, Zap, Target
-} from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { ArrowRight, ShieldCheck, Sparkles, Layers, Zap, Target } from 'lucide-react';
+import { SERVICES_CATALOG } from '../data/servicesCatalog';
 
 const Services = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const location = useLocation();
 
-  // Mouse Move Effect
   useEffect(() => {
     const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Scroll Reveal Effect
+  useEffect(() => {
+    const hash = location.hash?.replace(/^#/, '');
+    if (!hash) return;
+    const id = window.setTimeout(() => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+    return () => clearTimeout(id);
+  }, [location.hash]);
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-        }
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add('revealed');
       });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal-on-scroll').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
-  const detailedServices = [
-    {
-      icon: <Code size={36} />,
-      title: "Custom Software Development",
-      highlight: "Scalable Enterprise Solutions",
-      desc: "We engineer bespoke software tailored to your unique business logic. From monolithic to microservices architecture, we build resilient, high-performance applications that drive operational efficiency, digital transformation, and sustainable growth.",
-      keywords: ["Full-Stack Engineering", "Microservices", "API Development", "Legacy Modernization"],
-      color: "#3b82f6"
-    },
-    {
-      icon: <Bot size={36} />,
-      title: "AI & Machine Learning",
-      highlight: "Intelligent Automation Integration",
-      desc: "Harness the power of Artificial Intelligence to automate complex workflows and gain predictive insights. We deploy custom NLP models, computer vision systems, and intelligent chatbots to give your business a profound cognitive edge.",
-      keywords: ["Predictive Analytics", "Generative AI", "NLP", "Machine Learning Models"],
-      color: "#8b5cf6"
-    },
-    {
-      icon: <Cloud size={36} />,
-      title: "Cloud Architecture & DevOps",
-      highlight: "Secure & Resilient Infrastructure",
-      desc: "Transform your operations with seamless cloud migrations and cloud-native application development. We specialize in AWS, Azure, and GCP, providing CI/CD pipelines, containerization, and auto-scaling serverless architectures.",
-      keywords: ["AWS / Azure / GCP", "CI/CD Pipelines", "Kubernetes", "Serverless Infrastructure"],
-      color: "#06b6d4"
-    },
-    {
-      icon: <Smartphone size={36} />,
-      title: "Mobile App Development",
-      highlight: "Native & Cross-Platform Excellence",
-      desc: "Deliver captivating user experiences on Android and iOS. We build robust, feature-rich mobile applications using React Native, Flutter, and Swift, ensuring high performance, intuitive UI/UX, and flawless app store deployment.",
-      keywords: ["iOS & Android", "React Native", "Flutter", "Mobile UI/UX Design"],
-      color: "#10b981"
-    },
-    {
-      icon: <Layout size={36} />,
-      title: "UI/UX Design & Prototyping",
-      highlight: "Human-Centric Digital Experiences",
-      desc: "Our design thinking approach ensures your digital products are not only aesthetically stunning but also highly intuitive. We conduct comprehensive user research, wireframing, and interactive prototyping to craft interfaces that convert.",
-      keywords: ["Wireframing", "Interactive Prototyping", "User Research", "Design Systems"],
-      color: "#ec4899"
-    },
-    {
-      icon: <Globe2 size={36} />,
-      title: "E-Commerce & Web Solutions",
-      highlight: "High-Conversion Storefronts",
-      desc: "Scale your online retail business with enterprise-grade e-commerce platforms. We develop fast, secure, and SEO-optimized web applications with seamless payment gateway integrations, advanced inventory management, and omnichannel support.",
-      keywords: ["Shopify Plus", "Custom Web Apps", "Payment Gateways", "Technical SEO"],
-      color: "#f59e0b"
-    }
-  ];
-
   const coreFeatures = [
-    { title: "Agile Methodology", desc: "Iterative development ensuring transparency, adaptability, and rapid delivery cycles.", icon: <Target className="text-blue-400" /> },
-    { title: "Enterprise Security", desc: "Bank-grade encryption, secure authentications, and GDPR compliance built-in.", icon: <ShieldCheck className="text-purple-400" /> },
-    { title: "Scalable Architecture", desc: "Systems designed to handle millions of requests with zero downtime.", icon: <Layers className="text-cyan-400" /> },
-    { title: "Performance Optimized", desc: "Lightning-fast load times, optimized queries, and efficient state management.", icon: <Zap className="text-emerald-400" /> }
+    { title: 'Clear phases', desc: 'Discovery, build, and ship in visible slices—weekly demos and written decisions.', icon: <Target size={20} strokeWidth={2} /> },
+    { title: 'Security-conscious', desc: 'Auth, permissions, and audit-friendly patterns appropriate to your domain.', icon: <ShieldCheck size={20} strokeWidth={2} /> },
+    { title: 'Maintainable systems', desc: 'Codebase and infra choices you can extend without a rewrite every year.', icon: <Layers size={20} strokeWidth={2} /> },
+    { title: 'Performance aware', desc: 'Practical budgets for speed, cost, and observability from day one.', icon: <Zap size={20} strokeWidth={2} /> },
   ];
 
   return (
     <div className="modern-services">
       <Helmet>
-        <title>Our Services | Custom Software, AI & Cloud | ByteSoft HQ</title>
-        <meta name="description" content="Explore ByteSoft HQ's premium digital services: Custom Software Development, AI & Machine Learning, Cloud Architecture, Mobile Apps, UI/UX, and E-Commerce." />
-        <meta name="keywords" content="custom software development services, AI machine learning integration, cloud architecture DevOps, mobile app development solutions, UI UX prototyping design, enterprise e-commerce platforms, premium digital services" />
+        <title>Services | Commerce, ERP, Healthcare, Apps, AI & Cloud | ByteSoft HQ</title>
+        <meta
+          name="description"
+          content="ByteSoft services: E-commerce, school ERP, healthcare software, enterprise CRM, mobile apps, SEO & growth, AI integration, cloud, and UI/UX—with proof-minded delivery."
+        />
+        <meta
+          name="keywords"
+          content="e-commerce development, school ERP software, healthcare software HIPAA, enterprise CRM, mobile app development, SEO agency, AI workflow integration, cloud architecture, UI UX design agency"
+        />
       </Helmet>
       {/* Global Mouse Glow */}
       <div className="mouse-glow" style={{ transform: `translate(${mousePos.x - 200}px, ${mousePos.y - 200}px)` }} />
@@ -113,16 +71,15 @@ const Services = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <div className="hero-badge mx-auto mb-6">
+            <div className="hero-badge">
               <Sparkles size={16} />
-              <span>Premium Digital Services</span>
+              <span>Built for business impact</span>
             </div>
             <h1 className="hero-title">
-              Transforming Ideas Into <br />
-              <span className="gradient-text">Digital Reality</span>
+              Services that <span className="gradient-text">Move Metrics</span>
             </h1>
-            <p className="hero-desc mx-auto">
-              We leverage cutting-edge technology, strategic thinking, and exceptional design to deliver custom software solutions that propel your business forward. Explore our suite of enterprise-grade services.
+            <p className="hero-desc">
+              From commerce and ERP to AI, cloud, and design - practical execution, clear scope, and measurable results for each engagement.
             </p>
           </motion.div>
         </div>
@@ -132,68 +89,55 @@ const Services = () => {
       <section className="detailed-services-section">
         <div className="container">
           <div className="section-header reveal-on-scroll">
-            <span className="section-badge">Our Expertise</span>
-            <h2 className="section-title">What We <span className="gradient-text">Deliver</span></h2>
-            <p className="section-subtitle">Comprehensive, end-to-end technology solutions tailored for modern enterprises.</p>
+            <span className="section-badge">Catalog</span>
+            <h2 className="section-title">All <span className="gradient-text">Services</span></h2>
+            <p className="section-subtitle">
+              Tell us what you&apos;re building—we&apos;ll map it to the right stream and next steps.
+            </p>
           </div>
 
-          <div className="services-showcase">
-            {detailedServices.map((service, idx) => (
-              <div key={idx} className={`service-row reveal-on-scroll ${idx % 2 !== 0 ? 'reverse' : ''}`}>
-                <div className="service-content glass">
-                  <div className="service-icon-wrapper" style={{ background: `${service.color}15`, color: service.color }}>
-                    {service.icon}
-                  </div>
-                  <h3 className="service-heading">{service.title}</h3>
-                  <h4 className="service-highlight" style={{ color: service.color }}>{service.highlight}</h4>
-                  <p className="service-paragraph">{service.desc}</p>
-                  
-                  <div className="service-keywords">
-                    {service.keywords.map((kw, i) => (
-                      <span key={i} className="keyword-tag">{kw}</span>
-                    ))}
-                  </div>
-                  
-                  <button className="btn-learn-more" style={{ '--hover-color': service.color }}>
-                    Explore Capabilities <ArrowRight size={16} />
-                  </button>
-                </div>
-                
-                <div className="service-visual">
-                  <div className="visual-card glass">
-                    <div className="visual-abstract" style={{ 
-                      background: `radial-gradient(circle at 50% 50%, ${service.color}40 0%, transparent 70%)` 
-                    }}>
-                      {service.icon}
+          <div className="services-list">
+            {SERVICES_CATALOG.map((service) => {
+              const Icon = service.Icon;
+              return (
+                <article
+                  key={service.id}
+                  id={service.id}
+                  className="svc-card reveal-on-scroll glass"
+                  style={{ '--svc-accent': service.color }}
+                >
+                  <div className="svc-card-accent" aria-hidden="true" />
+                  <div className="svc-card-main">
+                    <header className="svc-card-head">
+                      <div className="svc-icon" style={{ background: `${service.color}12`, color: service.color }}>
+                        <Icon size={26} strokeWidth={1.75} aria-hidden />
+                      </div>
+                      <div className="svc-head-text">
+                        <h3 className="svc-title">{service.title}</h3>
+                        <p className="svc-tagline" style={{ color: service.color }}>{service.highlight}</p>
+                      </div>
+                      {service.tag ? (
+                        <span className="svc-pill">{service.tag}</span>
+                      ) : null}
+                    </header>
+                    <p className="svc-desc">{service.desc}</p>
+                    <p className="svc-detail">{service.detail}</p>
+                    <div className="svc-keywords" aria-label="Focus areas">
+                      {service.keywords.map((kw) => (
+                        <span key={kw} className="svc-keyword">{kw}</span>
+                      ))}
                     </div>
-                    <div className="visual-stats-mockup">
-                      <h4 className="stats-title" style={{ color: service.color }}>Expected Impact</h4>
-                      <div className="stat-row">
-                        <div className="stat-info">
-                          <span>Efficiency & ROI</span>
-                          <span style={{ color: service.color }}>+200%</span>
-                        </div>
-                        <div className="stat-bar"><div className="stat-fill" style={{ width: '90%', background: service.color }}></div></div>
-                      </div>
-                      <div className="stat-row">
-                        <div className="stat-info">
-                          <span>Security & Compliance</span>
-                          <span style={{ color: service.color }}>Enterprise Grade</span>
-                        </div>
-                        <div className="stat-bar"><div className="stat-fill" style={{ width: '100%', background: service.color }}></div></div>
-                      </div>
-                      <div className="stat-row">
-                        <div className="stat-info">
-                          <span>User Satisfaction</span>
-                          <span style={{ color: service.color }}>99.9%</span>
-                        </div>
-                        <div className="stat-bar"><div className="stat-fill" style={{ width: '95%', background: service.color }}></div></div>
-                      </div>
-                    </div>
+                    <Link className="svc-link" to="/contact" style={{ '--svc-hover': service.color }}>
+                      Discuss on a call <ArrowRight size={16} aria-hidden />
+                    </Link>
                   </div>
-                </div>
-              </div>
-            ))}
+                  <aside className="svc-aside">
+                    <span className="svc-aside-label">Proof line</span>
+                    <p className="svc-aside-metric">{service.metric}</p>
+                  </aside>
+                </article>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -201,22 +145,21 @@ const Services = () => {
       {/* ========== WHY CHOOSE US SECTION ========== */}
       <section className="why-choose-us">
         <div className="container">
-          <div className="glass-banner reveal-on-scroll">
-            <div className="banner-content">
-              <h2>Why Partner With <span className="gradient-text">Us?</span></h2>
-              <p>We don't just write code; we build strategic digital assets. Our approach combines deep technical expertise with business acumen to ensure your investment yields measurable ROI.</p>
-              
-              <div className="features-grid">
-                {coreFeatures.map((feature, idx) => (
-                  <div key={idx} className="feature-item">
-                    <div className="feature-icon">{feature.icon}</div>
-                    <div className="feature-text">
-                      <h4>{feature.title}</h4>
-                      <p>{feature.desc}</p>
-                    </div>
+          <div className="values-panel reveal-on-scroll">
+            <h2 className="values-heading">How we <span className="gradient-text">work</span></h2>
+            <p className="values-lede">
+              Senior engineers, clear milestones, and demos you can share with stakeholders—no black-box delivery.
+            </p>
+            <div className="values-grid">
+              {coreFeatures.map((feature, idx) => (
+                <div key={idx} className="values-item">
+                  <div className="values-icon">{feature.icon}</div>
+                  <div>
+                    <h4 className="values-item-title">{feature.title}</h4>
+                    <p className="values-item-desc">{feature.desc}</p>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -227,12 +170,12 @@ const Services = () => {
         <div className="container">
           <div className="cta-card reveal-on-scroll">
             <div className="cta-content text-center">
-              <h2>Ready to Accelerate Your <span className="gradient-text">Digital Growth?</span></h2>
-              <p>Let's discuss how our bespoke technology services can solve your complex business challenges and drive innovation.</p>
-              <div className="cta-buttons justify-center mt-8">
-                <button className="btn-primary btn-large">
-                  Get a Free Consultation <ArrowRight size={18} />
-                </button>
+              <h2>Have a project in mind?</h2>
+              <p>Share goals, timeline, and constraints—we&apos;ll reply with a sensible next step.</p>
+              <div className="cta-buttons">
+                <Link className="btn-primary btn-large" to="/contact">
+                  Start a conversation <ArrowRight size={18} aria-hidden />
+                </Link>
               </div>
             </div>
           </div>
@@ -244,10 +187,11 @@ const Services = () => {
         .modern-services {
           position: relative;
           overflow-x: hidden;
-          background: #030712;
+          background: #0b1220;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           color: #ffffff;
           min-height: 100vh;
+          -webkit-font-smoothing: antialiased;
         }
 
         .bg-mesh {
@@ -265,9 +209,9 @@ const Services = () => {
           position: fixed;
           top: 0;
           left: 0;
-          width: 400px;
-          height: 400px;
-          background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+          width: 420px;
+          height: 420px;
+          background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 72%);
           pointer-events: none;
           z-index: 100;
           transition: transform 0.1s ease-out;
@@ -282,11 +226,12 @@ const Services = () => {
         }
 
         .glass {
-          background: rgba(255, 255, 255, 0.03);
-          backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-          border-radius: 24px;
+          background: rgba(255, 255, 255, 0.025);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.065);
+          border-radius: 18px;
+          box-shadow: 0 12px 40px -24px rgba(0, 0, 0, 0.55);
         }
 
         .gradient-text {
@@ -298,9 +243,26 @@ const Services = () => {
 
         /* ========== HERO SECTION ========== */
         .services-hero {
-          padding: 160px 0 100px;
+          padding: clamp(120px, 18vw, 152px) 0 clamp(72px, 10vw, 88px);
           position: relative;
           text-align: center;
+          overflow: hidden;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .services-hero .hero-overlay {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+          background:
+            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.12), transparent 55%),
+            linear-gradient(to bottom, rgba(11, 18, 32, 0.15) 0%, #0b1220 100%);
+        }
+
+        .services-hero .container {
+          position: relative;
+          z-index: 1;
         }
 
         .hero-badge {
@@ -314,303 +276,301 @@ const Services = () => {
           color: #60a5fa;
           font-size: 0.875rem;
           font-weight: 600;
+          margin: 0 auto 20px;
         }
 
         .hero-title {
-          font-size: clamp(3rem, 6vw, 4.5rem);
+          font-size: clamp(2.25rem, 5.5vw, 3.35rem);
           font-weight: 800;
-          line-height: 1.1;
-          margin-bottom: 24px;
-          letter-spacing: -0.02em;
+          line-height: 1.12;
+          margin-bottom: 18px;
+          letter-spacing: -0.03em;
         }
 
         .hero-desc {
-          font-size: 1.125rem;
+          font-size: clamp(1rem, 2.2vw, 1.08rem);
           color: #94a3b8;
-          max-width: 700px;
-          line-height: 1.7;
+          max-width: 34rem;
+          line-height: 1.65;
+          margin-left: auto;
+          margin-right: auto;
         }
 
         /* ========== SECTION HEADERS ========== */
         .section-header {
           text-align: center;
-          margin-bottom: 80px;
+          margin-bottom: clamp(40px, 6vw, 56px);
         }
 
         .section-badge {
           display: inline-block;
-          padding: 6px 16px;
+          padding: 5px 14px;
           border-radius: 100px;
-          background: rgba(139, 92, 246, 0.1);
-          border: 1px solid rgba(139, 92, 246, 0.2);
-          color: #a78bfa;
-          font-size: 0.75rem;
+          background: rgba(59, 130, 246, 0.1);
+          border: 1px solid rgba(59, 130, 246, 0.22);
+          color: #7ab7ff;
+          font-size: 0.7rem;
           font-weight: 600;
-          letter-spacing: 1px;
-          margin-bottom: 16px;
+          letter-spacing: 0.12em;
+          margin-bottom: 14px;
           text-transform: uppercase;
         }
 
         .section-title {
-          font-size: clamp(2.5rem, 4vw, 3.5rem);
+          font-size: clamp(1.75rem, 4vw, 2.35rem);
           font-weight: 700;
-          margin-bottom: 16px;
+          margin-bottom: 10px;
+          letter-spacing: -0.02em;
         }
 
         .section-subtitle {
-          color: #94a3b8;
-          max-width: 600px;
+          color: #8b9aad;
+          max-width: 28rem;
           margin: 0 auto;
-          font-size: 1.1rem;
-        }
-
-        /* ========== DETAILED SERVICES ========== */
-        .detailed-services-section {
-          padding: 80px 0;
-        }
-
-        .service-row {
-          display: flex;
-          align-items: center;
-          gap: 64px;
-          margin-bottom: 100px;
-        }
-
-        .service-row.reverse {
-          flex-direction: row-reverse;
-        }
-
-        .service-content {
-          flex: 1;
-          padding: 48px;
-        }
-
-        .service-visual {
-          flex: 1;
-        }
-
-        .service-icon-wrapper {
-          display: inline-flex;
-          padding: 16px;
-          border-radius: 16px;
-          margin-bottom: 24px;
-        }
-
-        .service-heading {
-          font-size: 2rem;
-          font-weight: 700;
-          margin-bottom: 8px;
-        }
-
-        .service-highlight {
-          font-size: 1.125rem;
-          font-weight: 600;
-          margin-bottom: 24px;
-        }
-
-        .service-paragraph {
-          color: #94a3b8;
-          font-size: 1.05rem;
-          line-height: 1.7;
-          margin-bottom: 32px;
-        }
-
-        .service-keywords {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 12px;
-          margin-bottom: 32px;
-        }
-
-        .keyword-tag {
-          padding: 6px 14px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 8px;
-          font-size: 0.85rem;
-          color: #e2e8f0;
-          transition: all 0.3s ease;
-        }
-
-        .keyword-tag:hover {
-          background: rgba(255, 255, 255, 0.1);
-          transform: translateY(-2px);
-        }
-
-        .btn-learn-more {
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          background: transparent;
-          border: none;
-          color: #fff;
-          font-weight: 600;
-          font-size: 1rem;
-          cursor: pointer;
-          transition: gap 0.3s ease, color 0.3s ease;
-          padding: 0;
-        }
-
-        .btn-learn-more:hover {
-          gap: 16px;
-          color: var(--hover-color);
-        }
-
-        /* Mockup / Visual Area */
-        .visual-card {
-          position: relative;
-          height: 400px;
-          overflow: hidden;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px;
-        }
-
-        .visual-abstract {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          opacity: 0.5;
-        }
-
-        .visual-abstract svg {
-          width: 200px;
-          height: 200px;
-          opacity: 0.2;
-        }
-
-        .visual-stats-mockup {
-          position: relative;
-          width: 100%;
-          max-width: 340px;
-          background: rgba(255, 255, 255, 0.05);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 20px;
-          padding: 28px;
-          z-index: 2;
-          box-shadow: 0 24px 48px rgba(0,0,0,0.4);
-        }
-
-        .stats-title {
-          font-size: 1.1rem;
-          font-weight: 700;
-          margin-bottom: 24px;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-        }
-
-        .stat-row {
-          margin-bottom: 20px;
-        }
-
-        .stat-row:last-child {
-          margin-bottom: 0;
-        }
-
-        .stat-info {
-          display: flex;
-          justify-content: space-between;
-          font-size: 0.95rem;
-          font-weight: 600;
-          margin-bottom: 8px;
-          color: #e2e8f0;
-        }
-
-        .stat-bar {
-          width: 100%;
-          height: 8px;
-          background: rgba(255, 255, 255, 0.08);
-          border-radius: 10px;
-          overflow: hidden;
-        }
-
-        .stat-fill {
-          height: 100%;
-          border-radius: 10px;
-          transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ========== WHY CHOOSE US ========== */
-        .why-choose-us {
-          padding: 60px 0 100px;
-        }
-
-        .glass-banner {
-          background: rgba(255, 255, 255, 0.02);
-          backdrop-filter: blur(20px);
-          border: 1px solid rgba(255, 255, 255, 0.05);
-          border-radius: 32px;
-          padding: 64px;
-          text-align: center;
-        }
-
-        .banner-content h2 {
-          font-size: 2.5rem;
-          margin-bottom: 24px;
-        }
-
-        .banner-content > p {
-          color: #94a3b8;
-          max-width: 800px;
-          margin: 0 auto 64px;
-          font-size: 1.1rem;
+          font-size: 0.98rem;
           line-height: 1.6;
         }
 
-        .features-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-          gap: 32px;
-          text-align: left;
+        /* ========== SERVICE CARDS (clean list) ========== */
+        .detailed-services-section {
+          padding: clamp(56px, 8vw, 80px) 0 clamp(64px, 9vw, 88px);
         }
 
-        .feature-item {
+        .services-list {
+          max-width: 920px;
+          margin: 0 auto;
           display: flex;
+          flex-direction: column;
           gap: 16px;
         }
 
-        .feature-icon {
-          background: rgba(255, 255, 255, 0.05);
-          padding: 12px;
+        .svc-card {
+          --svc-accent: #3b82f6;
+          display: grid;
+          grid-template-columns: 4px minmax(0, 1fr) minmax(140px, 200px);
+          align-items: stretch;
+          padding: 0;
+          overflow: hidden;
+          scroll-margin-top: 88px;
+        }
+
+        .svc-card-accent {
+          background: linear-gradient(180deg, var(--svc-accent) 0%, rgba(59, 130, 246, 0.15) 55%, transparent 100%);
+          opacity: 0.95;
+        }
+
+        .svc-card-main {
+          padding: clamp(22px, 4vw, 30px) clamp(20px, 4vw, 32px);
+        }
+
+        .svc-card-head {
+          display: flex;
+          align-items: flex-start;
+          gap: 14px;
+          margin-bottom: 14px;
+          flex-wrap: wrap;
+        }
+
+        .svc-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 44px;
+          height: 44px;
           border-radius: 12px;
+          flex-shrink: 0;
+        }
+
+        .svc-head-text {
+          flex: 1;
+          min-width: 0;
+        }
+
+        .svc-title {
+          font-size: clamp(1.2rem, 2.6vw, 1.45rem);
+          font-weight: 700;
+          margin: 0 0 4px;
+          letter-spacing: -0.02em;
+          color: #f1f5f9;
+        }
+
+        .svc-tagline {
+          font-size: 0.88rem;
+          font-weight: 600;
+          margin: 0;
+          line-height: 1.35;
+        }
+
+        .svc-pill {
+          font-size: 0.65rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          padding: 5px 10px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #cbd5e1;
+          background: rgba(255, 255, 255, 0.04);
           height: fit-content;
         }
 
-        .feature-text h4 {
-          font-size: 1.125rem;
-          margin-bottom: 8px;
+        .svc-desc {
+          color: #cbd5e1;
+          font-size: 0.95rem;
+          line-height: 1.65;
+          margin: 0 0 10px;
         }
 
-        .feature-text p {
-          color: #94a3b8;
+        .svc-detail {
+          color: #8b9aad;
+          font-size: 0.88rem;
+          line-height: 1.65;
+          margin: 0 0 16px;
+        }
+
+        .svc-keywords {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin-bottom: 18px;
+        }
+
+        .svc-keyword {
+          font-size: 0.75rem;
+          font-weight: 500;
+          color: #b5c3d4;
+          padding: 5px 11px;
+          border-radius: 999px;
+          border: 1px solid rgba(255, 255, 255, 0.07);
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        .svc-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
           font-size: 0.9rem;
-          line-height: 1.5;
+          font-weight: 600;
+          color: #e2e8f0;
+          text-decoration: none;
+          transition: gap 0.25s ease, color 0.25s ease;
+        }
+
+        .svc-link:hover {
+          gap: 12px;
+          color: var(--svc-hover, #60a5fa);
+        }
+
+        .svc-aside {
+          padding: clamp(22px, 4vw, 28px) 22px;
+          border-left: 1px solid rgba(255, 255, 255, 0.06);
+          background: rgba(0, 0, 0, 0.12);
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+        }
+
+        .svc-aside-label {
+          font-size: 0.62rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.14em;
+          color: #64748b;
+          margin-bottom: 10px;
+        }
+
+        .svc-aside-metric {
+          margin: 0;
+          font-size: clamp(0.95rem, 2.2vw, 1.12rem);
+          font-weight: 700;
+          line-height: 1.35;
+          color: #f8fafc;
+        }
+
+        /* ========== VALUES ========== */
+        .why-choose-us {
+          padding: 0 0 clamp(72px, 10vw, 100px);
+        }
+
+        .values-panel {
+          max-width: 920px;
+          margin: 0 auto;
+          padding: clamp(36px, 5vw, 48px) clamp(24px, 4vw, 40px);
+          border-radius: 18px;
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          background: rgba(255, 255, 255, 0.02);
+        }
+
+        .values-heading {
+          font-size: clamp(1.5rem, 3.5vw, 1.85rem);
+          font-weight: 700;
+          text-align: center;
+          margin: 0 0 10px;
+          letter-spacing: -0.02em;
+        }
+
+        .values-lede {
+          text-align: center;
+          color: #8b9aad;
+          font-size: 0.95rem;
+          line-height: 1.6;
+          max-width: 32rem;
+          margin: 0 auto 28px;
+        }
+
+        .values-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 20px 28px;
+        }
+
+        .values-item {
+          display: flex;
+          gap: 14px;
+          align-items: flex-start;
+        }
+
+        .values-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          color: #94a3b8;
+          flex-shrink: 0;
+        }
+
+        .values-item-title {
+          font-size: 0.98rem;
+          font-weight: 600;
+          margin: 0 0 6px;
+          color: #e2e8f0;
+        }
+
+        .values-item-desc {
+          margin: 0;
+          color: #8b9aad;
+          font-size: 0.84rem;
+          line-height: 1.52;
         }
 
         /* ========== CTA SECTION ========== */
         .cta-section {
-          padding: 60px 0 120px;
+          padding: 24px 0 clamp(72px, 12vw, 112px);
         }
 
         .cta-card {
-          background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 32px;
-          padding: 80px 40px;
+          max-width: 720px;
+          margin: 0 auto;
+          background: linear-gradient(145deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.06));
+          border: 1px solid rgba(255, 255, 255, 0.09);
+          border-radius: 20px;
+          padding: clamp(40px, 6vw, 56px) clamp(24px, 5vw, 40px);
           position: relative;
           overflow: hidden;
-        }
-
-        .cta-card::before {
-          content: '';
-          position: absolute;
-          top: 0; left: 0; right: 0; bottom: 0;
-          background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPjxyZWN0IHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==');
-          opacity: 0.5;
         }
 
         .cta-content {
@@ -619,21 +579,33 @@ const Services = () => {
         }
 
         .cta-content h2 {
-          font-size: clamp(2rem, 4vw, 3rem);
-          margin-bottom: 24px;
+          font-size: clamp(1.45rem, 3.5vw, 1.85rem);
+          font-weight: 700;
+          margin-bottom: 12px;
+          letter-spacing: -0.02em;
         }
 
         .cta-content p {
-          color: #cbd5e1;
-          font-size: 1.125rem;
-          max-width: 600px;
+          color: #94a3b8;
+          font-size: 0.98rem;
+          max-width: 26rem;
           margin: 0 auto;
+          line-height: 1.6;
+        }
+
+        .cta-buttons {
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-top: 24px;
         }
 
         /* Buttons */
         .btn-primary {
           display: inline-flex;
           align-items: center;
+          justify-content: center;
           gap: 10px;
           padding: 14px 32px;
           border-radius: 12px;
@@ -643,6 +615,8 @@ const Services = () => {
           border: none;
           cursor: pointer;
           transition: all 0.3s ease;
+          text-decoration: none;
+          box-sizing: border-box;
         }
 
         .btn-primary:hover {
@@ -668,21 +642,44 @@ const Services = () => {
         }
 
         /* Responsive */
-        @media (max-width: 992px) {
-          .service-row, .service-row.reverse {
-            flex-direction: column;
-            gap: 40px;
+        @media (max-width: 720px) {
+          .svc-card {
+            grid-template-columns: 4px minmax(0, 1fr);
           }
-          .service-content {
-            padding: 32px;
+
+          .svc-aside {
+            grid-column: 1 / -1;
+            border-left: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 16px 22px 22px;
+            flex-direction: row;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+          }
+
+          .svc-aside-label {
+            margin-bottom: 0;
+          }
+
+          .svc-aside-metric {
+            text-align: right;
+            max-width: 58%;
+          }
+
+          .values-grid {
+            grid-template-columns: 1fr;
           }
         }
 
         @media (max-width: 768px) {
-          .services-hero { padding: 120px 0 80px; }
-          .hero-title { font-size: 2.5rem; }
-          .glass-banner { padding: 40px 24px; }
-          .cta-card { padding: 40px 24px; }
+          .container {
+            padding: 0 18px;
+          }
+
+          .services-hero {
+            padding: 108px 0 64px;
+          }
         }
       `}</style>
     </div>

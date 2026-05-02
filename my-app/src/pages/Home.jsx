@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { TerminalDemo } from '../components/TerminalDemo';
+import { SERVICES_CATALOG } from '../data/servicesCatalog';
 import { 
   Rocket, Code, Cloud, Smartphone, Bot, BarChart3, Globe, Zap, 
   ShieldCheck, Users, ArrowRight, CheckCircle2, ChevronRight, Play, 
@@ -27,18 +28,7 @@ const Home = () => {
     desc: 'Web, mobile, and cloud-native products—with practical AI where it moves the needle. From discovery through deployment, one accountable team.'
   };
 
-  // Services Data
-  const services = [
-    { icon: <ShoppingCart size={28} />, title: 'E-Commerce Solutions', desc: 'High-converting storefronts and marketplaces with smooth checkout.', metric: '+32% avg conversion uplift', color: '#3b82f6', tag: 'Popular' },
-    { icon: <School size={28} />, title: 'School ERP Systems', desc: 'Attendance, exams, fees, and communication in one platform.', metric: '10k+ students supported', color: '#10b981', tag: 'Featured' },
-    { icon: <HeartPulse size={28} />, title: 'Healthcare Software', desc: 'Secure patient workflows for clinics and hospital teams.', metric: '99.9% data accuracy goal', color: '#ef4444', tag: 'HIPAA' },
-    { icon: <Building2 size={28} />, title: 'Enterprise CRM', desc: 'Lead and customer lifecycle management with smart automation.', metric: '+41% sales team productivity', color: '#f59e0b', tag: '' },
-    { icon: <Smartphone size={28} />, title: 'App Development', desc: 'Fast, reliable mobile apps for Android and iOS.', metric: '4.8+ app store UX targets', color: '#8b5cf6', tag: 'React Native' },
-    { icon: <Search size={28} />, title: 'SEO & Growth', desc: 'Search visibility and growth campaigns backed by analytics.', metric: '+3.1x average traffic growth', color: '#ec4899', tag: '' },
-    { icon: <Bot size={28} />, title: 'AI Integration', desc: 'Practical AI features and automation for core workflows.', metric: '-37% manual effort', color: '#06b6d4', tag: 'Latest' },
-    { icon: <Cloud size={28} />, title: 'Cloud Services', desc: 'Cloud architecture, migration, and cost-optimized infrastructure.', metric: '-28% infra cost optimization', color: '#f97316', tag: 'Enterprise' },
-    { icon: <Layout size={28} />, title: 'UI/UX Design', desc: 'User-first interfaces designed for clarity and conversion.', metric: '+26% funnel completion', color: '#14b8a6', tag: 'Agency' }
-  ];
+  const services = SERVICES_CATALOG;
 
   // Testimonials
   const testimonials = [
@@ -223,12 +213,6 @@ const Home = () => {
         </motion.div>
       </section>
 
-      <div className="section-divider">
-        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-          <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="shape-fill"></path>
-        </svg>
-      </div>
-
       {/* ========== STATS SECTION ========== */}
       <section className="stats-section">
         <div className="container">
@@ -271,20 +255,23 @@ const Home = () => {
           </div>
 
           <div className="services-grid">
-            {services.map((service, idx) => (
-              <div key={idx} className="service-card reveal-on-scroll" style={{ transitionDelay: `${idx * 0.05}s` }}>
+            {services.map((service, idx) => {
+              const SvcIcon = service.Icon;
+              return (
+              <div key={service.id} className="service-card reveal-on-scroll" style={{ transitionDelay: `${idx * 0.05}s` }}>
                 {service.tag && <div className="service-tag">{service.tag}</div>}
                 <div className="service-icon" style={{ background: `${service.color}15`, color: service.color }}>
-                  {service.icon}
+                  <SvcIcon size={28} />
                 </div>
                 <h3 className="service-title">{service.title}</h3>
                 <p className="service-desc">{service.desc}</p>
                 <p className="service-metric">{service.metric}</p>
-                <Link className="service-link" style={{ color: service.color }} to="/services">
+                <Link className="service-link" style={{ color: service.color }} to={`/services#${service.id}`}>
                   Learn More <ChevronRight size={16} />
                 </Link>
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -471,28 +458,6 @@ const Home = () => {
           backdrop-filter: blur(16px);
           border: 1px solid rgba(255, 255, 255, 0.12);
           box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .section-divider {
-          position: relative;
-          top: -1px;
-          width: 100%;
-          overflow: hidden;
-          line-height: 0;
-          z-index: 14;
-          margin-top: clamp(-80px, -8vw, -52px);
-          pointer-events: none;
-        }
-
-        .section-divider svg {
-          position: relative;
-          display: block;
-          width: calc(100% + 1.3px);
-          height: clamp(72px, 10vw, 96px);
-        }
-
-        .section-divider .shape-fill {
-          fill: #0b1220;
         }
 
         .container {
@@ -778,7 +743,6 @@ const Home = () => {
         .stats-section {
           padding: clamp(52px, 7vw, 72px) 0;
           background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 62%);
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
           border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
@@ -1360,6 +1324,27 @@ const Home = () => {
             padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
           }
 
+          .hero-visual {
+            display: none;
+          }
+
+          .hero-grid {
+            justify-items: center;
+          }
+
+          .hero-text {
+            max-width: none;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+          }
+
+          .hero-badge {
+            margin-bottom: 18px;
+          }
+
           .reveal-on-scroll {
             opacity: 1;
             transform: none;
@@ -1395,8 +1380,12 @@ const Home = () => {
           }
 
           .hero-desc {
-            font-size: 1rem;
-            margin-bottom: 22px;
+            font-size: 0.98rem;
+            line-height: 1.58;
+            max-width: min(34ch, 92vw);
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 18px;
           }
 
           .stats-grid {
@@ -1435,11 +1424,42 @@ const Home = () => {
           
           .hero-buttons {
             flex-direction: column;
-            margin-bottom: 22px;
+            gap: 10px;
+            margin-bottom: 16px;
+            align-items: center;
+            width: 100%;
+            max-width: min(380px, 92vw);
+            margin-left: auto;
+            margin-right: auto;
           }
 
           .hero-trust-chips {
-            margin-top: -10px;
+            margin-top: 0;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            width: 100%;
+            max-width: min(380px, 92vw);
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .btn-large {
+            padding: 14px 18px;
+            font-size: 0.96rem;
+            border-radius: 10px;
+          }
+
+          .btn-outline {
+            background: rgba(255, 255, 255, 0.03);
+            border-color: rgba(148, 163, 184, 0.35);
+          }
+
+          .trust-chip {
+            width: 100%;
+            justify-content: center;
+            padding: 8px 10px;
+            font-size: 0.82rem;
           }
 
           .hero-terminal-demo {
@@ -1497,9 +1517,8 @@ const Home = () => {
             padding: 5px 12px;
           }
 
-          .trust-chip {
-            width: 100%;
-            justify-content: center;
+          .hero-trust-chips {
+            grid-template-columns: 1fr;
           }
 
           .service-card,
