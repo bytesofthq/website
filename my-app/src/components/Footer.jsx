@@ -1,88 +1,168 @@
 import { Link } from 'react-router-dom';
-import { MessageCircle, Briefcase, Globe, Mail, Camera, Users, Code, MapPin, Phone } from 'lucide-react';
+import { Code, Globe2, Mail, MapPin, Phone, SendHorizontal } from 'lucide-react';
 
 const Footer = () => {
+  const year = new Date().getFullYear();
+
+  const subscribe = (e) => {
+    e.preventDefault();
+    const data = new FormData(e.currentTarget);
+    const email = String(data.get('email') ?? '').trim();
+    const body = email
+      ? `Please add this address to your newsletter:\n${email}`
+      : 'Please add me to the newsletter.';
+    window.location.href = `mailto:hello@bytesoft.com?subject=${encodeURIComponent(
+      'Newsletter signup'
+    )}&body=${encodeURIComponent(body)}`;
+  };
+
   return (
-    <footer className="section-padding" style={{ background: 'var(--bg-secondary)', borderTop: '1px solid var(--glass-border)' }}>
-      <div className="container">
-        <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1.5fr', gap: '4rem', marginBottom: '4rem' }}>
-          <div className="footer-col">
-            <Link to="/" style={{ textDecoration: 'none', color: 'white', marginBottom: '1.5rem', display: 'inline-block' }}>
-              <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.5px' }}>Bytesoft</span>
-            </Link>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: 1.6 }}>
-              Engineering the next generation of digital products and services for startups and enterprises worldwide. We turn complex ideas into scalable reality.
-            </p>
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              {[Camera, Users, Code].map((Icon, i) => (
-                <a key={i} href="#" style={{ 
-                  width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(255,255,255,0.03)', 
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', 
-                  transition: 'all 0.3s' 
-                }} onMouseEnter={e => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'var(--brand-primary)'; }} 
-                   onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}>
-                  <Icon size={18} />
+    <footer className="site-footer">
+      <div className="site-footer-inner">
+        <div className="container">
+          <div className="site-footer-main">
+            <div className="site-footer-col site-footer-col--brand">
+              <Link to="/" className="site-footer-logo">
+                Bytesoft
+              </Link>
+              <p className="site-footer-lede">
+                We design and ship web products, integrations, and cloud-ready systems—from first
+                prototype to production.
+              </p>
+              <div className="site-footer-social" aria-label="Social links">
+                <a
+                  className="site-footer-social-btn"
+                  href="https://www.linkedin.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                >
+                  <Globe2 size={18} strokeWidth={2} aria-hidden />
                 </a>
-              ))}
+                <a
+                  className="site-footer-social-btn"
+                  href="https://github.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                >
+                  <Code size={18} strokeWidth={2} aria-hidden />
+                </a>
+                <a className="site-footer-social-btn" href="mailto:hello@bytesoft.com" aria-label="Email">
+                  <Mail size={18} strokeWidth={2} aria-hidden />
+                </a>
+              </div>
             </div>
-          </div>
-          
-          <div className="footer-col">
-            <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem', color: 'white' }}>Company</h4>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {['About Us', 'Our Process', 'Case Studies', 'Careers'].map(item => (
-                <li key={item} style={{ marginBottom: '1rem' }}>
-                  <Link to="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.3s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--brand-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>{item}</Link>
+
+            <nav className="site-footer-col" aria-labelledby="footer-nav-heading">
+              <h2 id="footer-nav-heading" className="site-footer-heading">
+                Navigate
+              </h2>
+              <ul className="site-footer-list">
+                {[
+                  { label: 'Home', to: '/' },
+                  { label: 'Services', to: '/services' },
+                  { label: 'Products', to: '/products' },
+                  { label: 'About', to: '/about' },
+                ].map(({ label, to }) => (
+                  <li key={to}>
+                    <Link to={to} className="site-footer-link">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <nav className="site-footer-col" aria-labelledby="footer-company-heading">
+              <h2 id="footer-company-heading" className="site-footer-heading">
+                Company
+              </h2>
+              <ul className="site-footer-list">
+                <li>
+                  <Link to="/contact" className="site-footer-link">
+                    Contact
+                  </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="footer-col">
-            <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem', color: 'white' }}>Support</h4>
-            <ul style={{ listStyle: 'none', padding: 0 }}>
-              {['Help Center', 'API Docs', 'Community', 'Contact Us'].map(item => (
-                <li key={item} style={{ marginBottom: '1rem' }}>
-                  <Link to="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.95rem', transition: 'color 0.3s' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--brand-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>{item}</Link>
+                <li>
+                  <Link to="/services" className="site-footer-link">
+                    What we deliver
+                  </Link>
                 </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="footer-col">
-            <h4 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1.5rem', color: 'white' }}>Contact Info</h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                <MapPin size={20} color="var(--brand-primary)" />
-                <span style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Tech Tower, IT Park, <br/>Lucknow, UP 226010</span>
-              </div>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <Phone size={20} color="var(--brand-primary)" />
-                <span style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>+91 (555) 012-3456</span>
-              </div>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <Mail size={20} color="var(--brand-primary)" />
-                <span style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>hello@bytesoft.com</span>
-              </div>
+                <li>
+                  <Link to="/products" className="site-footer-link">
+                    Case studies
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+
+            <div className="site-footer-col site-footer-col--contact">
+              <h2 className="site-footer-heading">Say hello</h2>
+              <ul className="site-footer-contact">
+                <li>
+                  <MapPin size={18} className="site-footer-contact-icon" aria-hidden />
+                  <span>
+                    Tech Tower, IT Park
+                    <br />
+                    Lucknow, UP 226010
+                  </span>
+                </li>
+                <li>
+                  <Phone size={18} className="site-footer-contact-icon" aria-hidden />
+                  <a href="tel:+915550123456" className="site-footer-contact-link">
+                    +91 (555) 012-3456
+                  </a>
+                </li>
+                <li>
+                  <Mail size={18} className="site-footer-contact-icon" aria-hidden />
+                  <a href="mailto:hello@bytesoft.com" className="site-footer-contact-link">
+                    hello@bytesoft.com
+                  </a>
+                </li>
+              </ul>
+
+              <form className="site-footer-newsletter" onSubmit={subscribe}>
+                <label htmlFor="footer-newsletter-email" className="visually-hidden">
+                  Email for updates
+                </label>
+                <input
+                  id="footer-newsletter-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="Your email"
+                  className="site-footer-newsletter-input"
+                />
+                <button type="submit" className="site-footer-newsletter-btn" aria-label="Subscribe">
+                  <SendHorizontal size={18} aria-hidden />
+                </button>
+              </form>
+              <p className="site-footer-newsletter-hint">We’ll only use this to share product updates.</p>
             </div>
-            
-            <div style={{ marginTop: '2rem', display: 'flex', gap: '0.5rem', background: 'rgba(255,255,255,0.03)', padding: '6px', borderRadius: '12px', border: '1px solid var(--glass-border)' }}>
-              <input 
-                type="email" 
-                placeholder="Join Newsletter" 
-                style={{ background: 'transparent', border: 'none', color: 'white', padding: '8px 12px', outline: 'none', flex: 1, fontSize: '0.9rem' }}
-              />
-              <button className="btn-premium btn-primary" style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '0.8rem' }}>Join</button>
-            </div>
           </div>
-        </div>
-        
-        <div style={{ paddingTop: '2.5rem', borderTop: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>&copy; {new Date().getFullYear()} ByteSoft. All rights reserved.</p>
-          <div style={{ display: 'flex', gap: '2.5rem' }}>
-            <Link to="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.3s' }} onMouseEnter={e => e.currentTarget.style.color = 'white'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>Privacy Policy</Link>
-            <Link to="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.3s' }} onMouseEnter={e => e.currentTarget.style.color = 'white'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>Terms of Service</Link>
-            <Link to="#" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.85rem', transition: 'color 0.3s' }} onMouseEnter={e => e.currentTarget.style.color = 'white'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}>Cookie Policy</Link>
+
+          <div className="site-footer-bottom">
+            <p className="site-footer-copy">
+              &copy; {year} ByteSoft. All rights reserved.
+            </p>
+            <div className="site-footer-legal">
+              <a
+                href="mailto:hello@bytesoft.com?subject=Privacy%20policy"
+                className="site-footer-legal-link"
+              >
+                Privacy
+              </a>
+              <a
+                href="mailto:hello@bytesoft.com?subject=Terms%20of%20service"
+                className="site-footer-legal-link"
+              >
+                Terms
+              </a>
+              <a href="mailto:hello@bytesoft.com?subject=Cookies%20policy" className="site-footer-legal-link">
+                Cookies
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -91,5 +171,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
-
