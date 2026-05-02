@@ -39,7 +39,64 @@ const ProjectDetails = () => {
     return () => observer.disconnect();
   }, [project]);
 
-  if (!project) return <div className="loading-state">Loading project details...</div>;
+  if (!project) {
+    return (
+      <div className="project-details-page">
+        <div className="bg-mesh" />
+        <div className="container not-found-wrap">
+          <h1>Project not found</h1>
+          <p>This project is not published yet. Browse available case studies instead.</p>
+          <Link to="/products" className="btn-primary">View All Projects</Link>
+        </div>
+        <style jsx="true">{`
+          .project-details-page {
+            min-height: 70vh;
+            background: #030712;
+            color: #fff;
+            display: flex;
+            align-items: center;
+          }
+          .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+            width: 100%;
+          }
+          .not-found-wrap {
+            text-align: center;
+          }
+          .not-found-wrap h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            margin-bottom: 12px;
+          }
+          .not-found-wrap p {
+            color: #94a3b8;
+            margin-bottom: 24px;
+          }
+          .bg-mesh {
+            position: fixed;
+            inset: 0;
+            background:
+              radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+          }
+          .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            text-decoration: none;
+          }
+        `}</style>
+      </div>
+    );
+  }
 
   return (
     <div className="project-details-page">

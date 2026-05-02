@@ -1,124 +1,79 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
+import { Link } from 'react-router-dom';
 import { TerminalDemo } from '../components/TerminalDemo';
 import { 
   Rocket, Code, Cloud, Smartphone, Bot, BarChart3, Globe, Zap, 
   ShieldCheck, Users, ArrowRight, CheckCircle2, ChevronRight, Play, 
   Star, Bus, School, Building2, ShoppingCart, HeartPulse, Database,
-  Layout, MessageSquare, Sparkles, Layers, Cpu, Globe2, Lock,
+  Layout, Sparkles, Layers, Cpu, Globe2, Lock, Terminal, GitBranch,
   MousePointer2, Camera, Search, Monitor, Award, ThumbsUp, Clock,
   Headphones, TrendingUp, Briefcase, Mail, Phone, MapPin, 
   Globe as Facebook, Globe as Twitter, Users as Linkedin, Camera as Instagram, Code as Github, 
-  ExternalLink, Calendar,
-  Clock3, Quote, MailOpen, PhoneCall, DollarSign, CreditCard,
+  Quote, MailOpen, FileCode,
   Truck, Headset, Shield, Zap as ZapFast, Leaf, Coffee, Gift
 } from 'lucide-react';
 
 const Home = () => {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [activeTab, setActiveTab] = useState('all');
   const [counters, setCounters] = useState({ projects: 0, clients: 0, countries: 0, satisfaction: 0 });
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
-  // Hero Slides Data
-  const heroSlides = [
-    { 
-      bg: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80",
-      title: "AI-Powered Digital Solutions",
-      subtitle: "Transforming Businesses With",
-      highlight: "Next-Gen Technology",
-      desc: "Leverage cutting-edge AI and custom software to drive unprecedented growth and efficiency."
-    },
-    { 
-      bg: "https://images.unsplash.com/photo-1551434678-e076c2235d1f?w=1920&q=80",
-      title: "Enterprise Software Development",
-      subtitle: "Scale Your Business With",
-      highlight: "Custom Enterprise Solutions",
-      desc: "From ERP to CRM, we build scalable systems that grow with your business."
-    },
-    { 
-      bg: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1920&q=80",
-      title: "Mobile & Web Excellence",
-      subtitle: "Experience The Future With",
-      highlight: "Cutting-Edge Applications",
-      desc: "Native mobile apps and responsive web applications that users love."
-    }
-  ];
+  const heroContent = {
+    bg: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=80',
+    title: 'Build Software That Grows Your Business',
+    highlight: '',
+    desc: 'Web, mobile, and cloud-native products—with practical AI where it moves the needle. From discovery through deployment, one accountable team.'
+  };
 
   // Services Data
   const services = [
-    { icon: <ShoppingCart size={28} />, title: 'E-Commerce Solutions', desc: 'Custom storefronts, multi-vendor marketplaces, and seamless payment integrations.', color: '#3b82f6', tag: 'Popular' },
-    { icon: <School size={28} />, title: 'School ERP Systems', desc: 'Manage attendance, exams, fees, and communication in one unified cloud platform.', color: '#10b981', tag: 'Featured' },
-    { icon: <HeartPulse size={28} />, title: 'Healthcare Software', desc: 'Secure patient management and diagnostic tools for modern clinics and hospitals.', color: '#ef4444', tag: 'HIPAA' },
-    { icon: <Building2 size={28} />, title: 'Enterprise CRM', desc: 'Boost sales efficiency with automated lead tracking and client relationship tools.', color: '#f59e0b', tag: '' },
-    { icon: <Smartphone size={28} />, title: 'App Development', desc: 'High-performance mobile applications for Android and iOS using modern frameworks.', color: '#8b5cf6', tag: 'React Native' },
-    { icon: <Search size={28} />, title: 'SEO & Growth', desc: 'Data-driven marketing strategies to put your brand at the top of search results.', color: '#ec4899', tag: '' },
-    { icon: <Bot size={28} />, title: 'AI Integration', desc: 'Custom AI models and automation solutions for intelligent business processes.', color: '#06b6d4', tag: 'Latest' },
-    { icon: <Cloud size={28} />, title: 'Cloud Services', desc: 'AWS, Azure, and GCP cloud architecture, migration, and management.', color: '#f97316', tag: 'Enterprise' }
+    { icon: <ShoppingCart size={28} />, title: 'E-Commerce Solutions', desc: 'High-converting storefronts and marketplaces with smooth checkout.', metric: '+32% avg conversion uplift', color: '#3b82f6', tag: 'Popular' },
+    { icon: <School size={28} />, title: 'School ERP Systems', desc: 'Attendance, exams, fees, and communication in one platform.', metric: '10k+ students supported', color: '#10b981', tag: 'Featured' },
+    { icon: <HeartPulse size={28} />, title: 'Healthcare Software', desc: 'Secure patient workflows for clinics and hospital teams.', metric: '99.9% data accuracy goal', color: '#ef4444', tag: 'HIPAA' },
+    { icon: <Building2 size={28} />, title: 'Enterprise CRM', desc: 'Lead and customer lifecycle management with smart automation.', metric: '+41% sales team productivity', color: '#f59e0b', tag: '' },
+    { icon: <Smartphone size={28} />, title: 'App Development', desc: 'Fast, reliable mobile apps for Android and iOS.', metric: '4.8+ app store UX targets', color: '#8b5cf6', tag: 'React Native' },
+    { icon: <Search size={28} />, title: 'SEO & Growth', desc: 'Search visibility and growth campaigns backed by analytics.', metric: '+3.1x average traffic growth', color: '#ec4899', tag: '' },
+    { icon: <Bot size={28} />, title: 'AI Integration', desc: 'Practical AI features and automation for core workflows.', metric: '-37% manual effort', color: '#06b6d4', tag: 'Latest' },
+    { icon: <Cloud size={28} />, title: 'Cloud Services', desc: 'Cloud architecture, migration, and cost-optimized infrastructure.', metric: '-28% infra cost optimization', color: '#f97316', tag: 'Enterprise' },
+    { icon: <Layout size={28} />, title: 'UI/UX Design', desc: 'User-first interfaces designed for clarity and conversion.', metric: '+26% funnel completion', color: '#14b8a6', tag: 'Agency' }
   ];
-
-  // Portfolio Projects
-  const projects = [
-    { title: 'TrackFlow Pro', category: 'saas', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&q=80', desc: 'Transport Management System', tech: 'React, Node.js, MongoDB' },
-    { title: 'MediCare Hub', category: 'healthcare', image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&q=80', desc: 'Patient Management Platform', tech: 'Next.js, Python, PostgreSQL' },
-    { title: 'EduSmart ERP', category: 'education', image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&q=80', desc: 'School Management System', tech: 'React, Django, MySQL' },
-    { title: 'ShopEase', category: 'ecommerce', image: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&q=80', desc: 'Multi-Vendor Marketplace', tech: 'Vue.js, Laravel, Redis' },
-    { title: 'FinFlow', category: 'fintech', image: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&q=80', desc: 'Financial Analytics Dashboard', tech: 'Angular, .NET Core, SQL Server' },
-    { title: 'SmartRetail', category: 'retail', image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&q=80', desc: 'POS & Inventory System', tech: 'Flutter, Firebase, Node.js' }
-  ];
-
-  const filteredProjects = activeTab === 'all' ? projects : projects.filter(p => p.category === activeTab);
 
   // Testimonials
   const testimonials = [
     { name: 'Sarah Johnson', role: 'CEO, TechCorp', content: 'ByteSoft transformed our business operations completely. Their ERP solution saved us 40% in operational costs within the first 3 months.', rating: 5, image: 'https://randomuser.me/api/portraits/women/1.jpg' },
-    { name: 'Michael Chen', role: 'CTO, InnovateLabs', content: 'The mobile app they built for us increased our user engagement by 300%. Their team is truly exceptional and forward-thinking.', rating: 5, image: 'https://randomuser.me/api/portraits/men/2.jpg' },
-    { name: 'Priya Sharma', role: 'Founder, FitLife', content: 'Professional, responsive, and technically brilliant. They delivered our platform ahead of schedule and under budget.', rating: 5, image: 'https://randomuser.me/api/portraits/women/3.jpg' },
-    { name: 'David Wilson', role: 'Director, EduGroup', content: 'The School ERP system has revolutionized how we manage our institutions. Highly recommended for educational organizations.', rating: 5, image: 'https://randomuser.me/api/portraits/men/4.jpg' }
+    { name: 'Michael Chen', role: 'CTO, InnovateLabs', content: 'The mobile app they built for us significantly improved user engagement and retention. Their team is collaborative and forward-thinking.', rating: 4.9, image: 'https://randomuser.me/api/portraits/men/2.jpg' },
+    { name: 'Priya Sharma', role: 'Founder, FitLife', content: 'Professional, responsive, and technically strong. They delivered our platform ahead of schedule with clear communication throughout.', rating: 4.8, image: 'https://randomuser.me/api/portraits/women/3.jpg' }
   ];
 
-  // Pricing Plans
-  const pricingPlans = [
-    { name: 'Starter', price: '$999', period: 'one-time', features: ['Custom Website', '5 Pages', 'Mobile Responsive', 'Basic SEO', '1 Month Support'], popular: false },
-    { name: 'Professional', price: '$2,999', period: 'one-time', features: ['Custom Web App', '10+ Pages', 'Database Integration', 'Advanced SEO', '3 Months Support', 'Analytics Setup'], popular: true },
-    { name: 'Enterprise', price: 'Custom', period: 'quote', features: ['Full Stack Solution', 'Unlimited Pages', 'AI Integration', 'Cloud Deployment', '1 Year Support', 'Dedicated Team'], popular: false }
-  ];
-
-  // Process Steps
-  const processSteps = [
-    { step: '01', title: 'Discovery', desc: 'Understanding your vision, goals, and requirements.', icon: <MessageSquare size={32} />, color: '#3b82f6' },
-    { step: '02', title: 'Strategy', desc: 'Creating a roadmap for success with timelines.', icon: <Layers size={32} />, color: '#8b5cf6' },
-    { step: '03', title: 'Development', desc: 'Agile development with weekly updates.', icon: <Code size={32} />, color: '#06b6d4' },
-    { step: '04', title: 'Launch', desc: 'Deployment, testing, and go-live support.', icon: <Rocket size={32} />, color: '#10b981' }
-  ];
-
-  // Tech Stack
   const techStack = [
-    { name: 'React.js', icon: <Code size={22} />, level: 95 },
-    { name: 'Next.js', icon: <Layout size={22} />, level: 90 },
-    { name: 'Node.js', icon: <Cpu size={22} />, level: 92 },
-    { name: 'Python', icon: <Database size={22} />, level: 88 },
-    { name: 'AWS', icon: <Cloud size={22} />, level: 85 },
-    { name: 'MongoDB', icon: <Database size={22} />, level: 90 },
-    { name: 'GraphQL', icon: <Layers size={22} />, level: 82 },
-    { name: 'TypeScript', icon: <Code size={22} />, level: 88 }
+    { name: 'React.js', role: 'UI & SPA', icon: <Code size={26} strokeWidth={1.75} /> },
+    { name: 'Next.js', role: 'Web platform', icon: <Layout size={26} strokeWidth={1.75} /> },
+    { name: 'Node.js', role: 'Backend runtime', icon: <Cpu size={26} strokeWidth={1.75} /> },
+    { name: 'Python', role: 'APIs & services', icon: <Terminal size={26} strokeWidth={1.75} /> },
+    { name: 'AWS', role: 'Cloud infra', icon: <Cloud size={26} strokeWidth={1.75} /> },
+    { name: 'MongoDB', role: 'Document data', icon: <Database size={26} strokeWidth={1.75} /> },
+    { name: 'GraphQL', role: 'Flexible APIs', icon: <GitBranch size={26} strokeWidth={1.75} /> },
+    { name: 'TypeScript', role: 'Type-safe JS', icon: <FileCode size={26} strokeWidth={1.75} /> }
   ];
 
-  // Blog Posts
-  const blogPosts = [
-    { title: 'How AI is Transforming Web Development in 2024', date: 'Dec 15, 2024', readTime: '5 min read', category: 'AI', image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&q=80' },
-    { title: 'Top 10 Security Practices for Your Web App', date: 'Dec 10, 2024', readTime: '7 min read', category: 'Security', image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400&q=80' },
-    { title: 'Why Your Business Needs a Custom ERP', date: 'Dec 5, 2024', readTime: '4 min read', category: 'Business', image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80' }
+  // Differentiators
+  const differentiators = [
+    { title: 'Business-first Delivery', desc: 'Every sprint is mapped to measurable business outcomes, not just feature output.' },
+    { title: 'Senior Engineering Team', desc: 'You work directly with experienced engineers and architects from discovery to launch.' },
+    { title: 'Transparent Execution', desc: 'Weekly demos, clear milestones, and predictable communication with zero black-box delivery.' },
+    { title: 'Scale-ready Foundations', desc: 'Security, performance, and cloud architecture are built in from day one.' }
   ];
 
-  // Animation and Counter Effect
+  // Honor OS reduced-motion preference.
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, [heroSlides.length]);
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const handleMotionPreference = () => setPrefersReducedMotion(mediaQuery.matches);
+    handleMotionPreference();
+    mediaQuery.addEventListener('change', handleMotionPreference);
+    return () => mediaQuery.removeEventListener('change', handleMotionPreference);
+  }, []);
 
   useEffect(() => {
     const animateCounter = (target, setter, duration = 2000) => {
@@ -155,6 +110,11 @@ const Home = () => {
 
   // Scroll Reveal
   useEffect(() => {
+    if (prefersReducedMotion || window.innerWidth <= 768) {
+      document.querySelectorAll('.reveal-on-scroll').forEach((el) => el.classList.add('revealed'));
+      return;
+    }
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -165,25 +125,15 @@ const Home = () => {
 
     document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [prefersReducedMotion]);
 
   // Mouse Move Effect
   useEffect(() => {
+    if (prefersReducedMotion) return;
     const handleMouseMove = (e) => setMousePos({ x: e.clientX, y: e.clientY });
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  const marqueeItems = [
-    "🏆 150+ Projects Delivered", "⭐ 4.9/5 Client Rating", "🚀 50+ Happy Clients", 
-    "🌍 12+ Countries", "💎 98% Client Retention", "🔒 100% Secure", 
-    "⚡ 24/7 Support", "🎯 99.9% Uptime", "💡 Innovation First"
-  ];
-
-  const clients = [
-    "TechCorp", "InnovateLabs", "FutureSoft", "DataDrive", "CloudNine", 
-    "SmartScale", "EduGroup", "FitLife", "MediCare", "FinTech Pro"
-  ];
+  }, [prefersReducedMotion]);
 
   return (
     <div className="modern-home">
@@ -191,144 +141,92 @@ const Home = () => {
         <title>ByteSoft HQ | AI-Powered Digital Solutions & Enterprise Software</title>
         <meta name="description" content="ByteSoft HQ offers next-gen AI-powered digital solutions, enterprise software development, mobile & web excellence, and custom software for modern businesses." />
         <meta name="keywords" content="AI-powered digital solutions, enterprise software development, custom software engineering, mobile app development, web excellence, tech agency, cloud services, software solutions company" />
+        <meta property="og:title" content="ByteSoft HQ | AI-Powered Digital Solutions" />
+        <meta property="og:description" content="Transform your business with enterprise software, AI integration, and custom web and mobile solutions." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://bytesoft.com/" />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="ByteSoft HQ | AI-Powered Digital Solutions" />
+        <meta property="twitter:description" content="Enterprise-grade software services for modern businesses." />
+        <link rel="canonical" href="https://bytesoft.com/" />
       </Helmet>
       {/* Global Mouse Glow */}
-      <div className="mouse-glow" style={{ transform: `translate(${mousePos.x - 200}px, ${mousePos.y - 200}px)` }} />
+      {!prefersReducedMotion && <div className="mouse-glow" style={{ transform: `translate(${mousePos.x - 200}px, ${mousePos.y - 200}px)` }} />}
       
       {/* Background Gradient Mesh */}
       <div className="bg-mesh" />
 
       {/* ========== HERO SECTION (INTELLIGENT OVERHAUL) ========== */}
       <section className="hero-section">
-        <AnimatePresence mode="wait">
-          {heroSlides.map((slide, idx) => idx === currentSlide && (
-            <motion.div 
-              key={idx} 
-              className="hero-slide active"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 1 }}
-            >
-              <div className="hero-bg" style={{ backgroundImage: `url(${slide.bg})` }} />
-              <div className="hero-overlay" />
-              
-              <div className="hero-content-wrapper">
-                <div className="container">
-                  <div className="hero-grid">
-                    <motion.div 
-                      className="hero-text"
-                      initial={{ opacity: 0, x: -50 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.4, duration: 0.8 }}
-                    >
-                      <div className="hero-badge">
-                        <Sparkles size={16} />
-                        <span>Intelligence Powered Software</span>
-                      </div>
-                      <h1 className="hero-title">
-                        {slide.title} <br />
-                        <span className="gradient-text">{slide.highlight}</span>
-                      </h1>
-                      <p className="hero-desc">{slide.desc}</p>
-                      
-                      <div className="hero-buttons">
-                        <button className="btn-primary btn-large">
-                          Launch Project <Rocket size={18} />
-                        </button>
-                        <button className="btn-outline btn-large">
-                          <Play size={18} /> Watch Demo
-                        </button>
-                      </div>
+        <motion.div
+          className="hero-slide active"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.7 }}
+        >
+          <div className="hero-bg" style={{ backgroundImage: `url(${heroContent.bg})` }} />
+          <div className="hero-overlay" />
 
-                      <div className="hero-stats-mini">
-                        <div className="mini-stat">
-                          <span className="mini-stat-val">150+</span>
-                          <span className="mini-stat-label">Deliveries</span>
-                        </div>
-                        <div className="mini-stat">
-                          <span className="mini-stat-val">50+</span>
-                          <span className="mini-stat-label">Clients</span>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div 
-                      className="hero-visual"
-                      initial={{ opacity: 0, scale: 0.9, rotateY: 20 }}
-                      animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                      transition={{ delay: 0.6, duration: 1 }}
-                    >
-                      {idx === 0 ? (
-                        <div className="hero-terminal-demo">
-                          <TerminalDemo />
-                          <div className="hero-floating-tags">
-                            <div className="tag glass">MERN Stack</div>
-                            <div className="tag glass">AI/ML</div>
-                            <div className="tag glass">Cloud Native</div>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="hero-glass-card glass">
-                          <div className="card-inner">
-                            <div className="card-header">
-                              <Zap color="#3b82f6" />
-                              <h3>Start Innovating</h3>
-                            </div>
-                            <p>Free Technical Blueprint Call</p>
-                            <form className="hero-form-compact">
-                              <input type="email" placeholder="Work email" />
-                              <button className="btn-primary">Book Now</button>
-                            </form>
-                            <div className="card-footer">
-                              <Shield size={12} /> Privacy Guaranteed
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </motion.div>
+          <div className="hero-content-wrapper">
+            <div className="container">
+              <div className="hero-grid">
+                <motion.div
+                  className="hero-text"
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.2, duration: 0.6 }}
+                >
+                  <div className="hero-badge">
+                    <Sparkles size={16} />
+                    <span>Custom software · AI-ready</span>
                   </div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </AnimatePresence>
+                  <h1 className="hero-title">
+                    {heroContent.title}
+                  </h1>
+                  <p className="hero-desc">{heroContent.desc}</p>
 
-        <div className="hero-controls">
-          {heroSlides.map((_, idx) => (
-            <button 
-              key={idx}
-              className={`control-dot ${idx === currentSlide ? 'active' : ''}`}
-              onClick={() => setCurrentSlide(idx)}
-            />
-          ))}
-        </div>
+                  <div className="hero-buttons">
+                    <Link to="/contact" className="btn-primary btn-large">
+                      Launch Project <Rocket size={18} />
+                    </Link>
+                    <Link to="/products" className="btn-outline btn-large">
+                      <Play size={18} /> Explore Products
+                    </Link>
+                  </div>
+
+                  <div className="hero-trust-chips">
+                    <span className="trust-chip">150+ Projects Delivered</span>
+                    <span className="trust-chip">4.9/5 Average Rating</span>
+                    <span className="trust-chip">24/7 Support</span>
+                  </div>
+
+                </motion.div>
+
+                <motion.div
+                  className="hero-visual"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.35, duration: 0.7 }}
+                >
+                  <div className="hero-terminal-demo">
+                    <TerminalDemo />
+                    <div className="hero-floating-tags" aria-hidden="true">
+                      <div className="tag glass">MERN Stack</div>
+                      <div className="tag glass">AI / ML</div>
+                      <div className="tag glass">Cloud Native</div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       <div className="section-divider">
         <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
           <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="shape-fill"></path>
         </svg>
-      </div>
-
-      {/* ========== MARQUEE TRUST BAR ========== */}
-      <div className="marquee-section">
-        <div className="marquee-wrapper">
-          <div className="marquee-content">
-            {marqueeItems.map((item, idx) => (
-              <React.Fragment key={idx}>
-                <span className="marquee-item">{item}</span>
-                <span className="marquee-separator">✦</span>
-              </React.Fragment>
-            ))}
-            {marqueeItems.map((item, idx) => (
-              <React.Fragment key={`dup-${idx}`}>
-                <span className="marquee-item">{item}</span>
-                <span className="marquee-separator">✦</span>
-              </React.Fragment>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* ========== STATS SECTION ========== */}
@@ -364,8 +262,12 @@ const Home = () => {
         <div className="container">
           <div className="section-header reveal-on-scroll">
             <span className="section-badge">What We Offer</span>
-            <h2 className="section-title">Comprehensive <span className="gradient-text">Digital Solutions</span></h2>
-            <p className="section-subtitle">End-to-end services to transform your business operations and drive growth</p>
+            <h2 className="section-title">
+              Services Built For <span className="gradient-text">Real Outcomes</span>
+            </h2>
+            <p className="section-subtitle">
+              Implementation-first delivery across product, UX, infra, and growth—focused on measurable impact, not slide decks.
+            </p>
           </div>
 
           <div className="services-grid">
@@ -377,80 +279,35 @@ const Home = () => {
                 </div>
                 <h3 className="service-title">{service.title}</h3>
                 <p className="service-desc">{service.desc}</p>
-                <div className="service-link" style={{ color: service.color }}>
+                <p className="service-metric">{service.metric}</p>
+                <Link className="service-link" style={{ color: service.color }} to="/services">
                   Learn More <ChevronRight size={16} />
-                </div>
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ========== PORTFOLIO SECTION ========== */}
-      <section className="portfolio-section">
+      {/* ========== WHY CHOOSE US SECTION ========== */}
+      <section className="why-section">
         <div className="container">
           <div className="section-header reveal-on-scroll">
-            <span className="section-badge">Our Work</span>
-            <h2 className="section-title">Recent <span className="gradient-text">Projects</span></h2>
-            <p className="section-subtitle">Showcasing our expertise across various industries</p>
+            <span className="section-badge">Why ByteSoft</span>
+            <h2 className="section-title">Built For <span className="gradient-text">Long-Term Results</span></h2>
+            <p className="section-subtitle">
+              Senior engineers and clear rituals—weekly demos, shared docs, no black-box milestones.
+            </p>
           </div>
 
-          <div className="portfolio-tabs reveal-on-scroll">
-            <button className={activeTab === 'all' ? 'tab-active' : ''} onClick={() => setActiveTab('all')}>All</button>
-            <button className={activeTab === 'saas' ? 'tab-active' : ''} onClick={() => setActiveTab('saas')}>SaaS</button>
-            <button className={activeTab === 'ecommerce' ? 'tab-active' : ''} onClick={() => setActiveTab('ecommerce')}>E-Commerce</button>
-            <button className={activeTab === 'healthcare' ? 'tab-active' : ''} onClick={() => setActiveTab('healthcare')}>Healthcare</button>
-            <button className={activeTab === 'education' ? 'tab-active' : ''} onClick={() => setActiveTab('education')}>Education</button>
-          </div>
-
-          <div className="portfolio-grid">
-            {filteredProjects.map((project, idx) => (
-              <div key={idx} className="portfolio-card reveal-on-scroll">
-                <div className="portfolio-image">
-                  <img src={project.image} alt={project.title} />
-                  <div className="portfolio-overlay">
-                    <button className="portfolio-btn">View Project <ExternalLink size={16} /></button>
-                  </div>
-                </div>
-                <div className="portfolio-info">
-                  <h4>{project.title}</h4>
-                  <p>{project.desc}</p>
-                  <div className="portfolio-tech">{project.tech}</div>
-                </div>
+          <div className="why-grid">
+            {differentiators.map((item, idx) => (
+              <div key={idx} className="why-card reveal-on-scroll" style={{ transitionDelay: `${idx * 0.06}s` }}>
+                <div className="why-card-index">0{idx + 1}</div>
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== PROCESS SECTION ========== */}
-      <section className="process-section">
-        <div className="container">
-          <div className="section-header reveal-on-scroll">
-            <span className="section-badge">How We Work</span>
-            <h2 className="section-title">Engineered For <span className="gradient-text">Success</span></h2>
-            <p className="section-subtitle">Our battle-tested development lifecycle ensures your project is delivered with surgical precision.</p>
-          </div>
-
-          <div className="process-timeline">
-            {processSteps.map((step, idx) => (
-              <div key={idx} className={`process-item reveal-on-scroll ${idx % 2 === 0 ? 'left' : 'right'}`} style={{ transitionDelay: `${idx * 0.15}s` }}>
-                <div className="process-dot" style={{ background: step.color }}>
-                  <div className="dot-inner" />
-                </div>
-                <div className="process-content glass">
-                  <div className="process-header">
-                    <div className="process-icon-box" style={{ background: `${step.color}15`, color: step.color }}>
-                      {step.icon}
-                    </div>
-                    <span className="process-step-num">{step.step}</span>
-                  </div>
-                  <h3>{step.title}</h3>
-                  <p>{step.desc}</p>
-                </div>
-              </div>
-            ))}
-            <div className="process-line" />
           </div>
         </div>
       </section>
@@ -460,16 +317,21 @@ const Home = () => {
         <div className="container">
           <div className="section-header reveal-on-scroll">
             <span className="section-badge">Technologies</span>
-            <h2 className="section-title">Our <span className="gradient-text">Powerhouse</span> Stack</h2>
-            <p className="section-subtitle">We don't just use tools; we master the ecosystem to build future-proof products.</p>
+            <h2 className="section-title">
+              Tools We Ship <span className="gradient-text">With Confidence</span>
+            </h2>
+            <p className="section-subtitle">
+              Battle-tested primitives for resilient products—paired with pragmatic architecture choices for your stack.
+            </p>
           </div>
 
           <div className="tech-cloud-grid">
             {techStack.map((tech, idx) => (
               <div key={idx} className="tech-tile reveal-on-scroll" style={{ transitionDelay: `${idx * 0.05}s` }}>
                 <div className="tech-tile-inner glass">
-                  <div className="tech-tile-icon">{tech.icon}</div>
+                  <div className="tech-tile-icon-wrap">{tech.icon}</div>
                   <span className="tech-tile-name">{tech.name}</span>
+                  <span className="tech-tile-role">{tech.role}</span>
                   <div className="tech-glow" />
                 </div>
               </div>
@@ -484,7 +346,9 @@ const Home = () => {
           <div className="section-header reveal-on-scroll">
             <span className="section-badge">Testimonials</span>
             <h2 className="section-title">Voices Of <span className="gradient-text">Trust</span></h2>
-            <p className="section-subtitle">Industry leaders rely on ByteSoft for mission-critical software solutions.</p>
+            <p className="section-subtitle">
+              Feedback from leaders who prioritized shipping quality and stable delivery over buzzwords.
+            </p>
           </div>
 
           <div className="testimonials-masonry">
@@ -495,7 +359,7 @@ const Home = () => {
                   <p className="testimonial-v2-text">{testimonial.content}</p>
                   <div className="testimonial-v2-footer">
                     <div className="testimonial-v2-avatar">
-                      <img src={testimonial.image} alt={testimonial.name} />
+                      <img src={testimonial.image} alt={testimonial.name} loading="lazy" decoding="async" />
                       <div className="avatar-border" />
                     </div>
                     <div className="testimonial-v2-info">
@@ -504,53 +368,9 @@ const Home = () => {
                     </div>
                     <div className="testimonial-v2-rating">
                       <Star size={16} fill="#fbbf24" color="#fbbf24" />
-                      <span>5.0</span>
+                      <span>{testimonial.rating.toFixed(1)}</span>
                     </div>
                   </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== CLIENTS MARQUEE ========== */}
-      <div className="clients-marquee">
-        <div className="clients-marquee-wrapper">
-          <div className="clients-marquee-content">
-            {clients.map((client, idx) => (
-              <div key={idx} className="client-item">{client}</div>
-            ))}
-            {clients.map((client, idx) => (
-              <div key={`dup-${idx}`} className="client-item">{client}</div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ========== BLOG SECTION ========== */}
-      <section className="blog-section">
-        <div className="container">
-          <div className="section-header reveal-on-scroll">
-            <span className="section-badge">Blog</span>
-            <h2 className="section-title">Latest <span className="gradient-text">Insights</span></h2>
-            <p className="section-subtitle">Stay updated with the latest trends in technology</p>
-          </div>
-
-          <div className="blog-grid">
-            {blogPosts.map((post, idx) => (
-              <div key={idx} className="blog-card reveal-on-scroll">
-                <div className="blog-image">
-                  <img src={post.image} alt={post.title} />
-                  <div className="blog-category">{post.category}</div>
-                </div>
-                <div className="blog-info">
-                  <div className="blog-meta">
-                    <span><Calendar size={14} /> {post.date}</span>
-                    <span><Clock3 size={14} /> {post.readTime}</span>
-                  </div>
-                  <h3>{post.title}</h3>
-                  <button className="blog-link">Read More <ChevronRight size={16} /></button>
                 </div>
               </div>
             ))}
@@ -563,19 +383,33 @@ const Home = () => {
         <div className="container">
           <div className="cta-card reveal-on-scroll">
             <div className="cta-content">
-              <h2>Ready to Build Your <span className="gradient-text">Digital Future?</span></h2>
-              <p>Join 150+ businesses that have transformed with our digital solutions. Let's discuss your project.</p>
+              <h2>
+                Ready to Shape Your Next <span className="gradient-text">Release?</span>
+              </h2>
+              <p>
+                Tell us about scope, timelines, or tech constraints—we’ll respond with a clear next step, not a generic pitch.
+              </p>
               <div className="cta-buttons">
-                <button className="btn-primary btn-large">Start a Project <ArrowRight size={18} /></button>
-                <button className="btn-outline btn-large">Schedule a Call <PhoneCall size={18} /></button>
+                <Link to="/contact" className="btn-primary btn-large">
+                  Start a project <ArrowRight size={18} />
+                </Link>
+                <Link to="/services" className="btn-outline btn-large">
+                  Browse services <ChevronRight size={18} />
+                </Link>
               </div>
+              <small className="cta-trust-text">No obligation. Typical reply within one business day.</small>
             </div>
           </div>
         </div>
       </section>
 
-      
-      
+      <div className="mobile-sticky-cta">
+        <Link to="/contact" className="btn-primary">
+          Start Your Project <ArrowRight size={16} />
+        </Link>
+      </div>
+
+
 
       <style jsx="true">{`
         /* ========== CSS STYLES ========== */
@@ -592,22 +426,23 @@ const Home = () => {
         .modern-home {
           position: relative;
           overflow-x: hidden;
-          background: #030712;
+          background: #0b1220;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
           color: #ffffff;
+          -webkit-font-smoothing: antialiased;
         }
 
-        /* Background Effects */
-        .bg-mesh {
-          position: fixed;
-          inset: 0;
-          background: 
-            radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
-          pointer-events: none;
-          z-index: -2;
+        .modern-home .btn-primary,
+        .modern-home .btn-outline,
+        .modern-home .service-link {
+          text-decoration: none;
         }
 
+        .modern-home .btn-outline {
+          color: #f8fafc;
+        }
+
+        /* Background mesh (single layered definition) */
         .mouse-glow {
           position: fixed;
           top: 0;
@@ -623,18 +458,18 @@ const Home = () => {
         .bg-mesh {
           position: fixed;
           inset: 0;
-          background: 
-            radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 40%),
-            radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 40%),
-            radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.02) 0%, transparent 60%);
+          background:
+            radial-gradient(circle at 14% 22%, rgba(59, 130, 246, 0.07) 0%, transparent 45%),
+            radial-gradient(circle at 88% 78%, rgba(139, 92, 246, 0.06) 0%, transparent 46%),
+            radial-gradient(circle at 52% 48%, rgba(6, 182, 212, 0.04) 0%, transparent 55%);
           pointer-events: none;
           z-index: -1;
         }
 
         .glass {
-          background: rgba(255, 255, 255, 0.03);
+          background: rgba(255, 255, 255, 0.05);
           backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.12);
           box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
 
@@ -644,24 +479,26 @@ const Home = () => {
           width: 100%;
           overflow: hidden;
           line-height: 0;
-          z-index: 10;
+          z-index: 14;
+          margin-top: clamp(-80px, -8vw, -52px);
+          pointer-events: none;
         }
 
         .section-divider svg {
           position: relative;
           display: block;
           width: calc(100% + 1.3px);
-          height: 80px;
+          height: clamp(72px, 10vw, 96px);
         }
 
         .section-divider .shape-fill {
-          fill: #030712;
+          fill: #0b1220;
         }
 
         .container {
           max-width: 1280px;
           margin: 0 auto;
-          padding: 0 24px;
+          padding: 0 clamp(14px, 3vw, 24px);
         }
 
         /* Reveal Animations */
@@ -709,10 +546,11 @@ const Home = () => {
         }
 
         .section-subtitle {
-          color: #94a3b8;
-          max-width: 600px;
+          color: #b2bfd3;
+          max-width: 42rem;
           margin: 0 auto;
-          font-size: 1.1rem;
+          font-size: clamp(1rem, 2.2vw, 1.12rem);
+          line-height: 1.65;
         }
 
         /* Buttons */
@@ -761,31 +599,34 @@ const Home = () => {
 
         /* ========== HERO REFINEMENTS ========== */
         .hero-section {
-          height: 100vh;
+          min-height: 100vh;
+          min-height: 100dvh;
           perspective: 1000px;
           position: relative;
-          overflow: hidden;
+          overflow-x: hidden;
+          overflow-y: visible;
+          margin-bottom: 0;
         }
 
+        /* Fill viewport so bg image reaches the fold (avoids naked #0b1220 stripe). */
         .hero-slide {
-          position: absolute;
-          inset: 0;
-          opacity: 0;
-          display: none;
-        }
-
-        .hero-slide.active {
-          opacity: 1;
+          position: relative;
           display: block;
+          min-height: 100vh;
+          min-height: 100dvh;
         }
 
         .hero-visual {
           position: relative;
           z-index: 20;
+          overflow: visible;
         }
 
+        /* Side margin leaves room for orbit-style pills so they aren’t clipped. */
         .hero-terminal-demo {
           position: relative;
+          overflow: visible;
+          margin: 12px 20px;
           box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.6);
         }
 
@@ -793,78 +634,57 @@ const Home = () => {
           position: absolute;
           inset: -20px;
           pointer-events: none;
+          z-index: 3;
         }
 
-        .tag {
+        .hero-floating-tags .tag {
           position: absolute;
           padding: 8px 16px;
           border-radius: 40px;
           font-size: 0.8rem;
           font-weight: 600;
-          animation: float 4s ease-in-out infinite;
+          color: #e2e8f0;
+          white-space: nowrap;
+          animation: hero-tag-float 4s ease-in-out infinite;
         }
 
-        .tag:nth-child(1) { top: 10%; left: -30px; animation-delay: 0s; }
-        .tag:nth-child(2) { bottom: 20%; right: -20px; animation-delay: 1s; }
-        .tag:nth-child(3) { top: 60%; left: -40px; animation-delay: 2s; }
-
-        @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
+        .hero-floating-tags .tag:nth-child(1) {
+          top: 10%;
+          left: -8px;
+          animation-delay: 0s;
         }
 
-        .hero-stats-mini {
-          display: flex;
-          gap: 32px;
-          margin-top: 40px;
+        .hero-floating-tags .tag:nth-child(2) {
+          bottom: 22%;
+          right: -12px;
+          animation-delay: 0.55s;
         }
 
-        .mini-stat {
-          display: flex;
-          flex-direction: column;
+        .hero-floating-tags .tag:nth-child(3) {
+          top: 58%;
+          left: -18px;
+          animation-delay: 1.1s;
         }
 
-        .mini-stat-val {
-          font-size: 1.5rem;
-          font-weight: 800;
-          color: #3b82f6;
-        }
-
-        .mini-stat-label {
-          font-size: 0.8rem;
-          color: #64748b;
-        }
-
-        .hero-controls {
-          position: absolute;
-          bottom: 40px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: 12px;
-          z-index: 100;
-        }
-
-        .control-dot {
-          width: 40px;
-          height: 4px;
-          background: rgba(255, 255, 255, 0.2);
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s;
-        }
-
-        .control-dot.active {
-          background: #3b82f6;
-          box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        @keyframes hero-tag-float {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-14px);
+          }
         }
 
         .hero-bg {
           position: absolute;
           inset: 0;
+          width: 100%;
+          height: 100%;
+          min-height: 100vh;
+          min-height: 100dvh;
           background-size: cover;
-          background-position: center;
-          transform: scale(1.05);
+          background-position: center bottom;
+          transform: scale(1.06);
           transition: transform 8s ease;
         }
 
@@ -875,7 +695,10 @@ const Home = () => {
         .hero-overlay {
           position: absolute;
           inset: 0;
-          background: linear-gradient(135deg, rgba(3, 7, 18, 0.85), rgba(3, 7, 18, 0.75));
+          pointer-events: none;
+          background:
+            linear-gradient(132deg, rgba(7, 12, 26, 0.58) 0%, rgba(11, 18, 32, 0.42) 48%, rgba(7, 12, 26, 0.52) 100%),
+            linear-gradient(to bottom, rgba(11, 18, 32, 0) 45%, rgba(11, 18, 32, 0.35) 78%, rgba(11, 18, 32, 0.97) 100%);
         }
 
         .hero-content-wrapper {
@@ -917,7 +740,7 @@ const Home = () => {
         }
 
         .hero-desc {
-          color: #94a3b8;
+          color: #c7d3e3;
           font-size: 1.1rem;
           line-height: 1.6;
           margin-bottom: 32px;
@@ -930,128 +753,33 @@ const Home = () => {
           flex-wrap: wrap;
         }
 
-        .hero-stats {
+        .hero-trust-chips {
           display: flex;
-          gap: 32px;
-        }
-
-        .hero-stat-value {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #3b82f6;
-        }
-
-        .hero-stat-label {
-          font-size: 0.8rem;
-          color: #64748b;
-        }
-
-        /* Floating Form Card */
-        .floating-card {
-          background: rgba(15, 23, 42, 0.9);
-          backdrop-filter: blur(20px);
-          border-radius: 24px;
-          padding: 32px;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-        }
-
-        .floating-card h3 {
-          font-size: 1.5rem;
-          margin-bottom: 8px;
-        }
-
-        .floating-card p {
-          color: #94a3b8;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-top: -18px;
           margin-bottom: 24px;
         }
 
-        .consult-form {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .consult-form input,
-        .consult-form select {
-          padding: 14px 18px;
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          color: white;
-          font-size: 0.9rem;
-        }
-
-        .consult-form input:focus,
-        .consult-form select:focus {
-          outline: none;
-          border-color: #3b82f6;
-        }
-
-        .hero-slider-controls {
-          position: absolute;
-          bottom: 30px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: 12px;
-          z-index: 10;
-        }
-
-        .slider-dot {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.4);
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .slider-dot.active {
-          width: 30px;
-          border-radius: 5px;
-          background: #3b82f6;
-        }
-
-        /* ========== MARQUEE SECTION ========== */
-        .marquee-section {
-          background: rgba(59, 130, 246, 0.05);
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
-          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-          padding: 16px 0;
-          overflow: hidden;
-        }
-
-        .marquee-wrapper {
-          overflow: hidden;
-          white-space: nowrap;
-        }
-
-        .marquee-content {
-          display: inline-block;
-          animation: marquee 25s linear infinite;
-        }
-
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-
-        .marquee-item {
-          margin: 0 20px;
-          font-size: 0.9rem;
-          font-weight: 500;
-        }
-
-        .marquee-separator {
-          margin: 0 10px;
-          color: #3b82f6;
+        .trust-chip {
+          display: inline-flex;
+          align-items: center;
+          padding: 8px 12px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.12);
+          color: #cbd5e1;
+          font-size: 0.8rem;
+          font-weight: 600;
+          letter-spacing: 0.2px;
         }
 
         /* ========== STATS SECTION ========== */
         .stats-section {
-          padding: 60px 0;
+          padding: clamp(52px, 7vw, 72px) 0;
+          background: linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, transparent 62%);
+          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .stats-grid {
@@ -1093,12 +821,13 @@ const Home = () => {
 
         /* ========== SERVICES SECTION ========== */
         .services-section {
-          padding: 80px 0;
+          padding: clamp(72px, 9vw, 96px) 0;
+          border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .services-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          grid-template-columns: repeat(3, minmax(0, 1fr));
           gap: 24px;
         }
 
@@ -1113,9 +842,10 @@ const Home = () => {
         }
 
         .service-card:hover {
-          transform: translateY(-5px);
+          transform: translateY(-8px);
           border-color: rgba(59, 130, 246, 0.3);
           background: rgba(59, 130, 246, 0.03);
+          box-shadow: 0 20px 40px -24px rgba(59, 130, 246, 0.5);
         }
 
         .service-tag {
@@ -1146,9 +876,16 @@ const Home = () => {
         }
 
         .service-desc {
-          color: #94a3b8;
+          color: #b8c4d8;
           line-height: 1.6;
-          margin-bottom: 20px;
+          margin-bottom: 10px;
+        }
+
+        .service-metric {
+          color: #dbeafe;
+          font-size: 0.84rem;
+          font-weight: 600;
+          margin-bottom: 16px;
         }
 
         .service-link {
@@ -1158,263 +895,127 @@ const Home = () => {
           font-size: 0.9rem;
           font-weight: 600;
           cursor: pointer;
+          text-decoration: none;
         }
 
-        /* ========== PORTFOLIO SECTION ========== */
-        .portfolio-section {
-          padding: 80px 0;
-          background: rgba(0, 0, 0, 0.3);
+        /* ========== WHY SECTION ========== */
+        .why-section {
+          padding: clamp(72px, 9vw, 96px) 0;
+          background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, rgba(0, 0, 0, 0) 100%);
+          border-top: 1px solid rgba(255, 255, 255, 0.04);
+          border-bottom: 1px solid rgba(255, 255, 255, 0.04);
         }
 
-        .portfolio-tabs {
-          display: flex;
-          justify-content: center;
-          gap: 12px;
-          margin-bottom: 48px;
-          flex-wrap: wrap;
-        }
-
-        .portfolio-tabs button {
-          padding: 8px 24px;
-          border-radius: 40px;
-          background: transparent;
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: #94a3b8;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-
-        .portfolio-tabs button:hover,
-        .tab-active {
-          background: #3b82f6;
-          border-color: #3b82f6;
-          color: white;
-        }
-
-        .portfolio-grid {
+        .why-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          gap: 30px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 24px;
         }
 
-        .portfolio-card {
+        .why-card {
           background: rgba(255, 255, 255, 0.02);
-          border-radius: 16px;
-          overflow: hidden;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 20px;
+          padding: 28px;
           transition: all 0.3s ease;
         }
 
-        .portfolio-card:hover {
-          transform: translateY(-5px);
+        .why-card:hover {
+          transform: translateY(-6px);
+          border-color: rgba(59, 130, 246, 0.35);
+          box-shadow: 0 20px 40px -24px rgba(59, 130, 246, 0.5);
         }
 
-        .portfolio-image {
-          position: relative;
-          overflow: hidden;
-          aspect-ratio: 16/10;
-        }
-
-        .portfolio-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.5s ease;
-        }
-
-        .portfolio-card:hover .portfolio-image img {
-          transform: scale(1.1);
-        }
-
-        .portfolio-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(59, 130, 246, 0.9);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-
-        .portfolio-card:hover .portfolio-overlay {
-          opacity: 1;
-        }
-
-        .portfolio-btn {
-          padding: 12px 24px;
-          background: white;
-          border: none;
-          border-radius: 40px;
-          font-weight: 600;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-        }
-
-        .portfolio-info {
-          padding: 20px;
-        }
-
-        .portfolio-info h4 {
-          font-size: 1.2rem;
-          margin-bottom: 8px;
-        }
-
-        .portfolio-info p {
-          color: #94a3b8;
-          font-size: 0.9rem;
-          margin-bottom: 12px;
-        }
-
-        .portfolio-tech {
+        .why-card-index {
           font-size: 0.8rem;
-          color: #3b82f6;
-        }
-
-        /* ========== PROCESS SECTION (ENHANCED) ========== */
-        .process-section {
-          padding: 100px 0;
-          position: relative;
-        }
-
-        .process-timeline {
-          position: relative;
-          max-width: 900px;
-          margin: 0 auto;
-          padding: 40px 0;
-        }
-
-        .process-line {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 50%;
-          width: 2px;
-          background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.3), transparent);
-          transform: translateX(-50%);
-        }
-
-        .process-item {
-          position: relative;
-          margin-bottom: 60px;
-          width: 100%;
-          display: flex;
-          justify-content: flex-end;
-        }
-
-        .process-item.left {
-          justify-content: flex-start;
-        }
-
-        .process-dot {
-          position: absolute;
-          left: 50%;
-          top: 30px;
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          transform: translateX(-50%);
-          z-index: 2;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-        }
-
-        .dot-inner {
-          width: 10px;
-          height: 10px;
-          background: white;
-          border-radius: 50%;
-        }
-
-        .process-content {
-          width: 42%;
-          padding: 40px;
-          border-radius: 24px;
-          position: relative;
-        }
-
-        .process-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-
-        .process-icon-box {
-          width: 60px;
-          height: 60px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .process-step-num {
-          font-size: 2.5rem;
-          font-weight: 900;
-          opacity: 0.1;
-          color: white;
-        }
-
-        .process-content h3 {
-          font-size: 1.5rem;
+          color: #60a5fa;
+          letter-spacing: 1px;
+          font-weight: 700;
           margin-bottom: 12px;
         }
 
-        .process-content p {
+        .why-card h3 {
+          font-size: 1.2rem;
+          margin-bottom: 10px;
+        }
+
+        .why-card p {
           color: #94a3b8;
-          line-height: 1.6;
+          line-height: 1.7;
         }
 
         /* ========== TECH STACK (ENHANCED) ========== */
         .tech-section {
-          padding: 100px 0;
-          background: rgba(0, 0, 0, 0.2);
+          padding: clamp(72px, 9vw, 96px) 0;
+          background: linear-gradient(180deg, rgba(59, 130, 246, 0.04) 0%, transparent 72%);
+          border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .tech-cloud-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
-          gap: 24px;
-        }
-
-        .tech-tile {
-          perspective: 1000px;
+          gap: 20px;
         }
 
         .tech-tile-inner {
           position: relative;
-          padding: 40px 20px;
+          padding: 32px 18px;
           text-align: center;
-          border-radius: 24px;
-          transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          border-radius: 22px;
+          transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 16px;
-          cursor: pointer;
+          gap: 12px;
         }
 
         .tech-tile:hover .tech-tile-inner {
-          transform: translateY(-10px) rotateX(10deg);
-          border-color: rgba(59, 130, 246, 0.5);
-          box-shadow: 0 20px 40px -15px rgba(59, 130, 246, 0.3);
+          transform: translateY(-6px);
+          border-color: rgba(96, 165, 250, 0.35);
+          box-shadow:
+            0 0 0 1px rgba(59, 130, 246, 0.12),
+            0 28px 48px -26px rgba(0, 0, 0, 0.55);
         }
 
-        .tech-tile-icon {
-          font-size: 2.5rem;
-          color: #3b82f6;
-          filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.3));
+        .tech-tile-icon-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 64px;
+          height: 64px;
+          border-radius: 18px;
+          background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.2), transparent 72%),
+            rgba(255, 255, 255, 0.04);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: #93c5fd;
+          transition: transform 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+        }
+
+        .tech-tile:hover .tech-tile-icon-wrap {
+          transform: scale(1.05);
+          border-color: rgba(96, 165, 250, 0.4);
+          color: #dbeafe;
+        }
+
+        .tech-tile-icon-wrap svg {
+          flex-shrink: 0;
         }
 
         .tech-tile-name {
           font-weight: 700;
-          letter-spacing: 1px;
+          letter-spacing: 0.04em;
           text-transform: uppercase;
-          font-size: 0.9rem;
+          font-size: 0.82rem;
+          color: #f1f5f9;
+        }
+
+        .tech-tile-role {
+          font-size: 0.78rem;
+          font-weight: 500;
+          color: #73869b;
+          line-height: 1.35;
+          max-width: 12rem;
+          text-wrap: balance;
         }
 
         .tech-glow {
@@ -1431,7 +1032,8 @@ const Home = () => {
 
         /* ========== TESTIMONIALS (ENHANCED) ========== */
         .testimonials-section {
-          padding: 100px 0;
+          padding: clamp(72px, 9vw, 96px) 0;
+          border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .testimonials-masonry {
@@ -1462,7 +1064,7 @@ const Home = () => {
         .testimonial-v2-text {
           font-size: 1.1rem;
           line-height: 1.7;
-          color: #cbd5e1;
+          color: #e2e8f0;
           margin-bottom: 32px;
           font-style: italic;
         }
@@ -1518,126 +1120,31 @@ const Home = () => {
           font-size: 0.85rem;
         }
 
-        /* ========== CLIENTS MARQUEE ========== */
-        .clients-marquee {
-          padding: 40px 0;
-          overflow: hidden;
-          background: rgba(255, 255, 255, 0.02);
-        }
-
-        .clients-marquee-wrapper {
-          overflow: hidden;
-        }
-
-        .clients-marquee-content {
-          display: flex;
-          gap: 50px;
-          animation: marquee 20s linear infinite;
-          white-space: nowrap;
-        }
-
-        .client-item {
-          font-size: 1.2rem;
-          font-weight: 500;
-          color: #64748b;
-          transition: color 0.3s ease;
-        }
-
-        .client-item:hover {
-          color: #3b82f6;
-        }
-
-        /* ========== BLOG SECTION ========== */
-        .blog-section {
-          padding: 80px 0;
-        }
-
-        .blog-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-          gap: 30px;
-        }
-
-        .blog-card {
-          background: rgba(255, 255, 255, 0.02);
-          border-radius: 16px;
-          overflow: hidden;
-          transition: all 0.3s ease;
-        }
-
-        .blog-card:hover {
-          transform: translateY(-5px);
-        }
-
-        .blog-image {
-          position: relative;
-          aspect-ratio: 16/9;
-          overflow: hidden;
-        }
-
-        .blog-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .blog-category {
-          position: absolute;
-          top: 16px;
-          right: 16px;
-          padding: 4px 12px;
-          background: #3b82f6;
-          border-radius: 20px;
-          font-size: 0.7rem;
-          font-weight: 600;
-        }
-
-        .blog-info {
-          padding: 24px;
-        }
-
-        .blog-meta {
-          display: flex;
-          gap: 16px;
-          margin-bottom: 12px;
-          font-size: 0.8rem;
-          color: #64748b;
-        }
-
-        .blog-meta span {
-          display: flex;
-          align-items: center;
-          gap: 5px;
-        }
-
-        .blog-info h3 {
-          font-size: 1.1rem;
-          margin-bottom: 16px;
-          line-height: 1.4;
-        }
-
-        .blog-link {
-          background: none;
-          border: none;
-          color: #3b82f6;
-          font-weight: 600;
-          display: inline-flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-        }
-
         /* ========== CTA SECTION ========== */
         .cta-section {
-          padding: 80px 0;
+          padding: clamp(72px, 9vw, 96px) 0;
+          border-top: 1px solid rgba(255, 255, 255, 0.04);
         }
 
         .cta-card {
-          background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+          position: relative;
+          background:
+            radial-gradient(ellipse 120% 80% at 20% -20%, rgba(59, 130, 246, 0.18), transparent 55%),
+            radial-gradient(ellipse 90% 60% at 100% 100%, rgba(139, 92, 246, 0.12), transparent 50%),
+            linear-gradient(145deg, rgba(15, 23, 42, 0.88), rgba(11, 18, 32, 0.68));
           border-radius: 32px;
-          padding: 64px;
+          padding: clamp(44px, 7vw, 64px);
           text-align: center;
-          border: 1px solid rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(148, 163, 184, 0.18);
+          box-shadow:
+            0 0 0 1px rgba(59, 130, 246, 0.08),
+            0 28px 64px -28px rgba(0, 0, 0, 0.58);
+          overflow: hidden;
+        }
+
+        .cta-content {
+          position: relative;
+          z-index: 1;
         }
 
         .cta-content h2 {
@@ -1656,6 +1163,22 @@ const Home = () => {
           gap: 16px;
           justify-content: center;
           flex-wrap: wrap;
+        }
+
+        .cta-trust-text {
+          display: inline-block;
+          margin-top: 14px;
+          color: #cbd5e1;
+        }
+
+        .mobile-sticky-cta {
+          display: none;
+        }
+
+        @media (min-width: 1536px) {
+          .container {
+            max-width: 1400px;
+          }
         }
 
         /* ========== FOOTER ========== */
@@ -1778,9 +1301,45 @@ const Home = () => {
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+          .hero-title {
+            font-size: clamp(2.2rem, 6vw, 3.6rem);
+          }
+
+          .hero-grid {
+            grid-template-columns: 1fr;
+            gap: 40px;
+          }
+
+          .hero-visual {
+            max-width: 780px;
+            margin: 0 auto;
+          }
+
+          .services-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+
+          .testimonials-masonry {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+        }
+
         @media (max-width: 1024px) {
           .hero-grid {
             grid-template-columns: 1fr;
+          }
+
+          .hero-visual {
+            display: block;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+          }
+
+          .hero-content-wrapper {
+            min-height: auto;
+            padding: 130px 0 80px;
           }
           
           .stats-grid {
@@ -1797,26 +1356,51 @@ const Home = () => {
         }
 
         @media (max-width: 768px) {
+          .modern-home {
+            padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+          }
+
+          .reveal-on-scroll {
+            opacity: 1;
+            transform: none;
+          }
+
+          .container {
+            padding: 0 16px;
+          }
+
+          .section-header {
+            margin-bottom: 44px;
+          }
+
+          .section-title {
+            font-size: clamp(1.7rem, 8vw, 2.2rem);
+          }
+
+          .section-subtitle {
+            font-size: 1rem;
+          }
+
+          .hero-section {
+            min-height: auto;
+          }
+
+          .hero-content-wrapper {
+            padding: 110px 0 70px;
+          }
+
+          .hero-title {
+            font-size: clamp(2rem, 11vw, 2.8rem);
+            margin-bottom: 16px;
+          }
+
+          .hero-desc {
+            font-size: 1rem;
+            margin-bottom: 22px;
+          }
+
           .stats-grid {
             grid-template-columns: 1fr;
-          }
-          
-          .process-line {
-            left: 20px;
-          }
-          
-          .process-dot {
-            left: 20px;
-          }
-          
-          .process-item {
-            justify-content: flex-start !important;
-            padding-left: 45px;
-          }
-          
-          .process-content {
-            width: 100% !important;
-            padding: 24px;
           }
           
           .tech-cloud-grid {
@@ -1826,17 +1410,23 @@ const Home = () => {
           .services-grid {
             grid-template-columns: 1fr;
           }
-          
-          .portfolio-grid {
+
+          .why-grid {
             grid-template-columns: 1fr;
           }
-          
+
           .testimonials-masonry {
             grid-template-columns: 1fr;
           }
-          
-          .blog-grid {
-            grid-template-columns: 1fr;
+
+          .testimonial-v2-inner {
+            padding: 26px;
+            border-radius: 22px;
+          }
+
+          .cta-card {
+            padding: 34px 20px;
+            border-radius: 22px;
           }
           
           .footer-grid {
@@ -1845,11 +1435,98 @@ const Home = () => {
           
           .hero-buttons {
             flex-direction: column;
+            margin-bottom: 22px;
+          }
+
+          .hero-trust-chips {
+            margin-top: -10px;
+          }
+
+          .hero-terminal-demo {
+            margin: 10px 2px;
+          }
+
+          .hero-floating-tags {
+            inset: -14px;
+          }
+
+          .hero-floating-tags .tag {
+            font-size: 0.72rem;
+            padding: 6px 11px;
+          }
+
+          .hero-floating-tags .tag:nth-child(1) {
+            top: 6%;
+            left: -6px;
+          }
+
+          .hero-floating-tags .tag:nth-child(2) {
+            bottom: 16%;
+            right: -8px;
+          }
+
+          .hero-floating-tags .tag:nth-child(3) {
+            top: 50%;
+            left: -10px;
           }
           
           .btn-primary, .btn-outline {
             width: 100%;
             justify-content: center;
+          }
+
+          .mobile-sticky-cta {
+            display: flex;
+            position: fixed;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            z-index: 1500;
+          }
+
+          .mobile-sticky-cta .btn-primary {
+            width: 100%;
+            justify-content: center;
+            box-shadow: 0 16px 30px -16px rgba(59, 130, 246, 0.8);
+          }
+        }
+
+        @media (max-width: 420px) {
+          .hero-badge {
+            font-size: 0.72rem;
+            padding: 5px 12px;
+          }
+
+          .trust-chip {
+            width: 100%;
+            justify-content: center;
+          }
+
+          .service-card,
+          .why-card {
+            padding: 22px;
+          }
+
+          .stat-card {
+            padding: 24px;
+          }
+
+          .stat-number {
+            font-size: 2.1rem;
+          }
+
+          .hero-trust-chips {
+            gap: 8px;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          *,
+          *::before,
+          *::after {
+            animation: none !important;
+            transition: none !important;
+            scroll-behavior: auto !important;
           }
         }
       `}</style>

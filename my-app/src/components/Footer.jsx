@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Rocket, MessageCircle, Briefcase, Globe, Mail, Camera, Users, Code, MapPin, Phone } from 'lucide-react';
+import { MessageCircle, Briefcase, Globe, Mail, Camera, Users, Code, MapPin, Phone } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -7,11 +7,8 @@ const Footer = () => {
       <div className="container">
         <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1.5fr', gap: '4rem', marginBottom: '4rem' }}>
           <div className="footer-col">
-            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', color: 'white', marginBottom: '1.5rem' }}>
-              <div style={{ background: 'var(--gradient-brand)', padding: '0.5rem', borderRadius: '10px', color: 'white' }}>
-                <Rocket size={20} />
-              </div>
-              <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-1px' }}>Byte<span className="text-gradient">Soft</span></span>
+            <Link to="/" style={{ textDecoration: 'none', color: 'white', marginBottom: '1.5rem', display: 'inline-block' }}>
+              <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.5px' }}>Bytesoft</span>
             </Link>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '2rem', lineHeight: 1.6 }}>
               Engineering the next generation of digital products and services for startups and enterprises worldwide. We turn complex ideas into scalable reality.

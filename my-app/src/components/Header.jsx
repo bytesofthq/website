@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Rocket, Menu, X, ArrowRight } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
@@ -20,6 +20,26 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === 'Escape') setMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Services', path: '/services' },
@@ -29,115 +49,97 @@ const Header = () => {
   ];
 
   return (
-    <nav style={{
-      position: 'fixed',
-      top: 0,
-      width: '100%',
-      zIndex: 1000,
-      padding: isScrolled ? '0.75rem 0' : '1.5rem 0',
-      background: isScrolled ? 'rgba(3, 7, 18, 0.85)' : 'transparent',
-      backdropFilter: isScrolled ? 'blur(24px)' : 'none',
-      borderBottom: isScrolled ? '1px solid var(--glass-border)' : 'none',
-      transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)'
-    }}>
+    <nav
+      className={`site-header${isScrolled ? ' site-header--scrolled' : ''}${mobileMenuOpen ? ' site-header--menu-open' : ''}`}
+      role="navigation"
+      aria-label="Main"
+    >
       {/* Scroll Progress Bar */}
-      <div style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        height: '2px',
-        width: `${scrollProgress}%`,
-        background: 'var(--brand-primary)',
-        transition: 'width 0.1s linear',
-        boxShadow: '0 0 10px var(--brand-primary)'
-      }} />
+      <div
+        className="site-header-progress"
+        style={{ width: `${scrollProgress}%` }}
+        aria-hidden
+      />
 
-      <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', textDecoration: 'none', color: 'white' }}>
-          <div style={{
-            background: 'var(--gradient-brand)',
-            padding: '0.6rem',
-            borderRadius: '12px',
-            color: 'white',
-            boxShadow: 'var(--shadow-glow)'
-          }}>
-            <Rocket size={24} />
-          </div>
-          <span style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-1px' }}>Byte<span className="text-gradient">Soft</span></span>
+      {/* Mobile: backdrop + drawer render first so bar (below) stacks on top */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <>
+            <motion.div
+              key="site-header-menu-backdrop"
+              className="site-header-menu-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              aria-hidden
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <motion.div
+              key="site-header-drawer"
+              id="site-header-drawer"
+              className="site-header-drawer"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Navigation"
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+            >
+              <div className="site-header-drawer-scroll">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className="site-header-drawer-link"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+                <Link
+                  to="/contact"
+                  className="btn-premium btn-primary site-header-drawer-cta"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Work With Us <ArrowRight size={16} aria-hidden />
+                </Link>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      <div className="container site-header-inner">
+        <Link to="/" className="site-header-logo">
+          <span>Bytesoft</span>
         </Link>
-        
+
         {/* Desktop Nav */}
-        <div className="desktop-nav">
+        <div className="desktop-nav site-header-desktop">
           {navLinks.map((link) => (
-            <Link key={link.name} to={link.path} className="nav-link" style={{
-              color: 'var(--text-secondary)',
-              textDecoration: 'none',
-              fontWeight: 500,
-              fontSize: '0.95rem'
-            }}>
+            <Link key={link.name} to={link.path} className="nav-link site-header-nav-link">
               {link.name}
             </Link>
           ))}
-          <button className="btn-premium btn-primary" style={{ padding: '10px 24px', fontSize: '0.9rem' }}>
-            Work With Us <ArrowRight size={16} style={{ marginLeft: '8px' }} />
-          </button>
+          <Link to="/contact" className="btn-premium btn-primary site-header-cta">
+            Work With Us <ArrowRight size={16} aria-hidden />
+          </Link>
         </div>
 
         {/* Mobile Toggle */}
-        <div className="mobile-toggle" style={{ cursor: 'pointer', color: 'white' }} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </div>
+        <button
+          type="button"
+          className="mobile-toggle site-header-menu-btn"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-expanded={mobileMenuOpen}
+          aria-controls="site-header-drawer"
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
       </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="glass"
-            style={{ 
-              position: 'absolute', 
-              top: '100%', 
-              left: 0, 
-              width: '100%', 
-              padding: '2rem', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: '1.2rem',
-              borderTop: '1px solid rgba(255,255,255,0.05)',
-              background: 'rgba(3, 7, 18, 0.98)'
-            }}
-          >
-            {navLinks.map((link) => (
-              <Link 
-                key={link.name} 
-                to={link.path} 
-                style={{ 
-                  color: 'white', 
-                  textDecoration: 'none', 
-                  fontSize: '1.2rem', 
-                  fontWeight: 600, 
-                  paddingBottom: '0.5rem',
-                  borderBottom: '1px solid rgba(255,255,255,0.05)'
-                }} 
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <button 
-              className="btn-premium btn-primary" 
-              style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }} 
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Work With Us <ArrowRight size={16} style={{ marginLeft: '8px' }} />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </nav>
   );
 };
