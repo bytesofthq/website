@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { 
   Rocket, Code, Cloud, Smartphone, Bot, ShieldCheck, 
   ArrowRight, Database, Layout, MessageSquare, 
@@ -91,6 +92,11 @@ const Services = () => {
 
   return (
     <div className="modern-services">
+      <Helmet>
+        <title>Our Services | Custom Software, AI & Cloud | ByteSoft HQ</title>
+        <meta name="description" content="Explore ByteSoft HQ's premium digital services: Custom Software Development, AI & Machine Learning, Cloud Architecture, Mobile Apps, UI/UX, and E-Commerce." />
+        <meta name="keywords" content="custom software development services, AI machine learning integration, cloud architecture DevOps, mobile app development solutions, UI UX prototyping design, enterprise e-commerce platforms, premium digital services" />
+      </Helmet>
       {/* Global Mouse Glow */}
       <div className="mouse-glow" style={{ transform: `translate(${mousePos.x - 200}px, ${mousePos.y - 200}px)` }} />
       

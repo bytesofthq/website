@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, ExternalLink, Layers, ArrowUpRight } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import { projectsData } from '../data/projects';
 
 const Products = () => {
@@ -30,6 +31,11 @@ const Products = () => {
 
   return (
     <div className="modern-products">
+      <Helmet>
+        <title>Our Digital Portfolio | Premium Software Products & Projects</title>
+        <meta name="description" content="Explore our diverse portfolio of scalable software products, full-stack web applications, enterprise solutions, and high-performance digital projects." />
+        <meta name="keywords" content="premium software portfolio, scalable digital products, enterprise web applications, full-stack software development projects, SaaS products showcase, high-performance web architecture, professional tech portfolio, custom software solutions, digital transformation case studies" />
+      </Helmet>
       {/* Global Mouse Glow */}
       <div className="mouse-glow" style={{ transform: `translate(${mousePos.x - 200}px, ${mousePos.y - 200}px)` }} />
       

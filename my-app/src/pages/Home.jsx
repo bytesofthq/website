@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { TerminalDemo } from '../components/TerminalDemo';
 import { 
   Rocket, Code, Cloud, Smartphone, Bot, BarChart3, Globe, Zap, 
@@ -186,6 +187,11 @@ const Home = () => {
 
   return (
     <div className="modern-home">
+      <Helmet>
+        <title>ByteSoft HQ | AI-Powered Digital Solutions & Enterprise Software</title>
+        <meta name="description" content="ByteSoft HQ offers next-gen AI-powered digital solutions, enterprise software development, mobile & web excellence, and custom software for modern businesses." />
+        <meta name="keywords" content="AI-powered digital solutions, enterprise software development, custom software engineering, mobile app development, web excellence, tech agency, cloud services, software solutions company" />
+      </Helmet>
       {/* Global Mouse Glow */}
       <div className="mouse-glow" style={{ transform: `translate(${mousePos.x - 200}px, ${mousePos.y - 200}px)` }} />
       

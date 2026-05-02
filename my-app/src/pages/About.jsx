@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import {
   Rocket, Target, Award, Users, Heart, Code, Cloud, Smartphone,
   Shield, Clock, Globe, TrendingUp, CheckCircle, ChevronRight,
@@ -149,6 +150,11 @@ const About = () => {
 
   return (
     <div className="about-page">
+      <Helmet>
+        <title>About Us | ByteSoft HQ | Our Story & Mission</title>
+        <meta name="description" content="Discover the story behind ByteSoft HQ. We are a team of passionate technologists crafting digital excellence since 2018, transforming businesses with innovation." />
+        <meta name="keywords" content="about ByteSoft HQ, our software story, digital excellence, tech leadership, top rated software agency, passionate technologists, enterprise solutions provider" />
+      </Helmet>
       {/* Background Effects */}
       <div className="about-bg-mesh" />
       

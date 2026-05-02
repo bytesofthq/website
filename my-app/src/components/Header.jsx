@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Rocket, Menu, X, ArrowRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -66,7 +67,7 @@ const Header = () => {
         </Link>
         
         {/* Desktop Nav */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2.5rem' }} className="desktop-nav">
+        <div className="desktop-nav">
           {navLinks.map((link) => (
             <Link key={link.name} to={link.path} className="nav-link" style={{
               color: 'var(--text-secondary)',
@@ -83,21 +84,60 @@ const Header = () => {
         </div>
 
         {/* Mobile Toggle */}
-        <div className="mobile-toggle" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ cursor: 'pointer', color: 'white' }}>
+        <div className="mobile-toggle" style={{ cursor: 'pointer', color: 'white' }} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </div>
       </div>
 
-      {/* Mobile Menu (Simplified for now) */}
-      {mobileMenuOpen && (
-        <div className="glass" style={{ position: 'absolute', top: '100%', left: 0, width: '100%', padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {navLinks.map((link) => (
-            <Link key={link.name} to={link.path} style={{ color: 'white', textDecoration: 'none', fontSize: '1.2rem', fontWeight: 600 }} onClick={() => setMobileMenuOpen(false)}>
-              {link.name}
-            </Link>
-          ))}
-        </div>
-      )}
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="glass"
+            style={{ 
+              position: 'absolute', 
+              top: '100%', 
+              left: 0, 
+              width: '100%', 
+              padding: '2rem', 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '1.2rem',
+              borderTop: '1px solid rgba(255,255,255,0.05)',
+              background: 'rgba(3, 7, 18, 0.98)'
+            }}
+          >
+            {navLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                to={link.path} 
+                style={{ 
+                  color: 'white', 
+                  textDecoration: 'none', 
+                  fontSize: '1.2rem', 
+                  fontWeight: 600, 
+                  paddingBottom: '0.5rem',
+                  borderBottom: '1px solid rgba(255,255,255,0.05)'
+                }} 
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+            <button 
+              className="btn-premium btn-primary" 
+              style={{ width: '100%', display: 'flex', justifyContent: 'center', marginTop: '0.5rem' }} 
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Work With Us <ArrowRight size={16} style={{ marginLeft: '8px' }} />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };

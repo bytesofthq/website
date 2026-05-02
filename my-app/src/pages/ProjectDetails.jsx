@@ -5,6 +5,7 @@ import {
   ArrowLeft, ExternalLink, GraduationCap, Users, Shield, 
   Activity, Zap, Layout, Server, Database, Sparkles, CheckCircle2
 } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import { projectsData } from '../data/projects';
 
 const ProjectDetails = () => {
@@ -42,6 +43,11 @@ const ProjectDetails = () => {
 
   return (
     <div className="project-details-page">
+      <Helmet>
+        <title>{project.name} | Project Case Study | Custom Software</title>
+        <meta name="description" content={project.shortDescription || project.introduction} />
+        <meta name="keywords" content={`${project.name}, ${project.category}, custom software development case study, enterprise application showcase, ${(project.techStack?.frontend || []).join(', ')}, ${(project.techStack?.backend || []).join(', ')}, secure scalable architecture, professional software implementation`} />
+      </Helmet>
       {/* Global Mouse Glow */}
       <div className="mouse-glow" style={{ transform: `translate(${mousePos.x - 200}px, ${mousePos.y - 200}px)` }} />
       <div className="bg-mesh" />
